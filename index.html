@@ -32,7 +32,8 @@ body{font-family:'DM Sans',sans-serif;font-weight:300;background:var(--snow);col
 .map-legend{display:flex;gap:1.5rem;flex-wrap:wrap;margin-bottom:1rem}
 .ml-item{display:flex;align-items:center;gap:.5rem;font-family:'DM Mono',monospace;font-size:.6rem;color:var(--text-muted)}
 .ml-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-.etape-block{margin-bottom:2.5rem;border:1px solid rgba(26,23,20,.08);border-radius:4px;overflow:hidden;background:white}
+.etape-block{margin-bottom:2.5rem;border:1px solid rgba(26,23,20,.08);border-radius:4px;overflow:hidden;background:white;scroll-margin-top:1rem}
+.etape-block:target{outline:3px solid rgba(126,184,201,.45);outline-offset:3px}
 .etape-head{display:grid;grid-template-columns:auto 1fr;border-bottom:1px solid rgba(26,23,20,.06)}
 .etape-day-badge{padding:1.5rem;display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:70px}
 .etape-day-num{font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;line-height:1;color:white}
@@ -44,12 +45,21 @@ body{font-family:'DM Sans',sans-serif;font-weight:300;background:var(--snow);col
 .etape-schedule{display:flex;gap:1rem;flex-wrap:wrap;margin-top:.85rem;padding-top:.75rem;border-top:1px solid rgba(26,23,20,.09)}
 .schedule-item{font-family:'DM Mono',monospace;font-size:.58rem;color:var(--text-muted)}
 .schedule-item strong{display:block;color:var(--stone);font-size:.7rem;margin-bottom:.1rem}
+.route-choice{display:flex;gap:3px;margin:.8rem 0 0;padding:3px;background:rgba(26,23,20,.08);width:max-content;max-width:100%;border-radius:4px}
+.route-choice button{border:0;background:transparent;color:var(--text-muted);padding:.55rem .75rem;font-family:'DM Mono',monospace;font-size:.6rem;cursor:pointer;border-radius:3px}
+.route-choice button.is-active{background:white;color:var(--stone);box-shadow:0 1px 3px rgba(26,23,20,.12)}
+.global-route-choice{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin:.8rem 0 1rem;padding:.8rem 1rem;border-left:3px solid var(--moss);background:white}
+.global-route-choice .route-choice{margin:0}
+.global-route-label{font-family:'DM Mono',monospace;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--stone)}
 .em{display:flex;flex-direction:column;gap:.1rem}
 .em-val{font-family:'DM Mono',monospace;font-size:.82rem;font-weight:500;color:var(--stone)}
 .em-key{font-family:'DM Mono',monospace;font-size:.52rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted)}
 .etape-body{display:grid;grid-template-columns:1fr 1fr;gap:0}
 .profile-wrap{padding:1.2rem 1.5rem;border-right:1px solid rgba(26,23,20,.06)}
 .profile-lbl{font-family:'DM Mono',monospace;font-size:.56rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text-muted);margin-bottom:.6rem}
+.profile-summary{display:flex;gap:.8rem;flex-wrap:wrap;margin:-.25rem 0 .7rem;font-family:'DM Mono',monospace;font-size:.6rem;color:var(--stone)}
+.profile-summary .up{color:#287b5a}
+.profile-summary .down{color:#c9773a}
 .profile-wrap svg{touch-action:none;cursor:grab}
 .profile-wrap svg.is-dragging{cursor:grabbing}
 .daily-profile-toolbar{display:flex;justify-content:flex-end;gap:.25rem;margin:-1.8rem 0 .4rem}
@@ -85,7 +95,7 @@ body{font-family:'DM Sans',sans-serif;font-weight:300;background:var(--snow);col
 .action-link:hover,.install-btn:hover{border-color:var(--summit)}
 .install-btn{display:none}
 .offline-note{margin-top:1rem;padding:.75rem 1rem;background:rgba(126,184,201,.12);border-left:3px solid var(--glacier);font-size:.75rem;line-height:1.5}
-.alternate-card{margin:0 1.5rem 1.5rem;padding:1.2rem 1.35rem;background:#fbf4f5;border-left:4px solid #8b3f4d}
+.alternate-card{display:none}
 .alternate-head{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap}
 .alternate-title{font-family:'Playfair Display',serif;font-size:1rem;color:var(--stone);margin-bottom:.25rem}
 .alternate-meta{font-family:'DM Mono',monospace;font-size:.62rem;color:#8b3f4d}
@@ -139,20 +149,27 @@ body{font-family:'DM Sans',sans-serif;font-weight:300;background:var(--snow);col
   </div>
   <div></div>
   <div class="cover-stats">
-    <div class="cs"><div class="cs-val">35<span class="cs-unit">,93 km</span></div><div class="cs-lbl">distance totale</div></div>
-    <div class="cs"><div class="cs-val">+2779<span class="cs-unit"> m</span></div><div class="cs-lbl">d&eacute;nivel&eacute; positif</div></div>
+    <div class="cs"><div class="cs-val" id="total-distance">35<span class="cs-unit">,64 km</span></div><div class="cs-lbl">distance totale</div></div>
+    <div class="cs"><div class="cs-val" id="total-gain">+2776<span class="cs-unit"> m</span></div><div class="cs-lbl">d&eacute;nivel&eacute; positif</div></div>
     <div class="cs"><div class="cs-val">2355<span class="cs-unit"> m</span></div><div class="cs-lbl">point culminant</div></div>
-    <div class="cs"><div class="cs-val">18<span class="cs-unit">h10</span></div><div class="cs-lbl">dur&eacute;e estim&eacute;e</div></div>
+    <div class="cs"><div class="cs-val" id="total-duration">18<span class="cs-unit">h10</span></div><div class="cs-lbl">dur&eacute;e estim&eacute;e</div></div>
   </div>
 </header>
 
-<section class="sec-wrap" style="background:var(--snow)">
+<section class="sec-wrap" id="vue-ensemble" style="background:var(--snow)">
   <p class="sec-lbl">01 &middot; Trac&eacute; global</p>
   <h2 class="sec-title">Vue d&apos;ensemble</h2>
+  <div class="global-route-choice">
+    <div class="global-route-label">Choix du parcours total</div>
+    <div class="route-choice" aria-label="Choix du parcours total">
+      <button type="button" data-j3-route="classic">Parcours classique</button>
+      <button type="button" data-j3-route="variant">Avec variante J3</button>
+    </div>
+  </div>
   <div class="map-legend">
     <span class="ml-item"><span class="ml-dot" style="background:#7eb8c9"></span>J1 &middot; Plaines-Joux &rarr; Lac d&apos;Anterne</span>
     <span class="ml-item"><span class="ml-dot" style="background:#c9773a"></span>J2 &middot; Lac d&apos;Anterne &rarr; Refuge de Plat&eacute;</span>
-    <span class="ml-item"><span class="ml-dot" style="background:#6b8c5a"></span>J3 &middot; Refuge de Plat&eacute; &rarr; Plaines-Joux</span>
+    <span class="ml-item" id="global-j3-legend"><span class="ml-dot" style="background:#6b8c5a"></span>J3 classique &middot; Refuge de Plat&eacute; &rarr; Plaines-Joux</span>
   </div>
   <div id="map-global"></div>
   <div class="poi-key">
@@ -160,12 +177,12 @@ body{font-family:'DM Sans',sans-serif;font-weight:300;background:var(--snow);col
     <span><b style="background:#c9773a">!</b>Passage d&eacute;licat</span>
     <span><b style="background:#526b8a">R</b>Refuge / bivouac</span>
     <span><b style="background:#6b5b95">V</b>Point de vue</span>
-    <span><b style="background:#8b3f4d">A</b>Itin&eacute;raire secondaire</span>
     <span><b style="background:#1a1714">P</b>Parking</span>
   </div>
   <p class="map-help">Utilisez le bouton des couches, en haut &agrave; droite de la carte, pour changer de fond.</p>
   <div class="global-profile">
-    <div class="profile-lbl">Profil altim&eacute;trique total &middot; 35,6 km</div>
+    <div class="profile-lbl">Profil altim&eacute;trique total</div>
+    <div class="profile-summary" id="global-profile-summary"><span>35,64 km</span><span class="up">+2776 m</span><span class="down">&minus;2779 m</span></div>
     <div class="profile-toolbar">
       <button class="profile-tool" id="profile-zoom-in" type="button" title="Zoom avant" aria-label="Zoom avant">+</button>
       <button class="profile-tool" id="profile-zoom-out" type="button" title="Zoom arri&egrave;re" aria-label="Zoom arri&egrave;re">&minus;</button>
@@ -179,7 +196,7 @@ body{font-family:'DM Sans',sans-serif;font-weight:300;background:var(--snow);col
   <p class="sec-lbl">02 &middot; &Eacute;tapes d&eacute;taill&eacute;es</p>
   <h2 class="sec-title">Roadbook jour par jour</h2>
 
-  <div class="etape-block">
+  <div class="etape-block" id="etape-1">
     <div class="etape-head">
       <div class="etape-day-badge" style="background:#7eb8c9">
         <div class="etape-day-num">1</div><div class="etape-day-lbl">JEU.</div>
@@ -206,7 +223,7 @@ body{font-family:'DM Sans',sans-serif;font-weight:300;background:var(--snow);col
       </div>
     </div>
     <div class="etape-body">
-      <div class="profile-wrap"><div class="profile-lbl">Profil altim&eacute;trique</div><svg viewBox="0 0 900 128" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:128px;display:block">
+      <div class="profile-wrap"><div class="profile-lbl">Profil altim&eacute;trique</div><div class="profile-summary"><span>10,01 km</span><span class="up">+1032 m</span><span class="down">&minus;328 m</span></div><svg viewBox="0 0 900 128" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:128px;display:block">
   <defs><linearGradient id="grad-rb-j1" x1="0" x2="0" y1="0" y2="1">
     <stop offset="0%" stop-color="#7eb8c9" stop-opacity="0.4"/>
     <stop offset="100%" stop-color="#7eb8c9" stop-opacity="0.03"/>
@@ -241,7 +258,7 @@ body{font-family:'DM Sans',sans-serif;font-weight:300;background:var(--snow);col
     </div>
   </div>
 
-  <div class="etape-block">
+  <div class="etape-block" id="etape-2">
     <div class="etape-head">
       <div class="etape-day-badge" style="background:#c9773a">
         <div class="etape-day-num">2</div><div class="etape-day-lbl">VEN.</div>
@@ -268,7 +285,7 @@ body{font-family:'DM Sans',sans-serif;font-weight:300;background:var(--snow);col
       </div>
     </div>
     <div class="etape-body">
-      <div class="profile-wrap"><div class="profile-lbl">Profil altim&eacute;trique</div><svg viewBox="0 0 900 128" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:128px;display:block">
+      <div class="profile-wrap"><div class="profile-lbl">Profil altim&eacute;trique</div><div class="profile-summary"><span>14,94 km</span><span class="up">+1039 m</span><span class="down">&minus;1056 m</span></div><svg viewBox="0 0 900 128" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:128px;display:block">
   <defs><linearGradient id="grad-rb-j2" x1="0" x2="0" y1="0" y2="1">
     <stop offset="0%" stop-color="#c9773a" stop-opacity="0.4"/>
     <stop offset="100%" stop-color="#c9773a" stop-opacity="0.03"/>
@@ -302,7 +319,7 @@ body{font-family:'DM Sans',sans-serif;font-weight:300;background:var(--snow);col
     </div>
   </div>
 
-  <div class="etape-block">
+  <div class="etape-block" id="etape-3">
     <div class="etape-head">
       <div class="etape-day-badge" style="background:#6b8c5a">
         <div class="etape-day-num">3</div><div class="etape-day-lbl">SAM.</div>
@@ -310,15 +327,15 @@ body{font-family:'DM Sans',sans-serif;font-weight:300;background:var(--snow);col
       <div class="etape-head-body">
         <div class="etape-date">Samedi 22 ao&ucirc;t 2026</div>
         <div class="etape-name">Refuge de Plat&eacute; &rarr; Plaines-Joux</div>
-        <div class="etape-metrics">
-          <div class="em"><span class="em-val">10,69 km</span><span class="em-key">distance</span></div>
-          <div class="em"><span class="em-val">5h 05</span><span class="em-key">dur&eacute;e</span></div>
-          <div class="em"><span class="em-val" style="color:#4a9">+705 m</span><span class="em-key">D+</span></div>
-          <div class="em"><span class="em-val" style="color:#c9773a">&minus;1395 m</span><span class="em-key">D&minus;</span></div>
-          <div class="em"><span class="em-val">1240&ndash;2322 m</span><span class="em-key">altitude</span></div>
-          <div class="em"><span class="em-val" style="color:var(--moss)">Moyenne</span><span class="em-key">difficult&eacute;</span></div>
+        <div class="etape-metrics" id="j3-metrics">
+          <div class="em"><span class="em-val" data-j3-stat="distance">10,69 km</span><span class="em-key">distance</span></div>
+          <div class="em"><span class="em-val" data-j3-stat="duration">5h 05</span><span class="em-key">dur&eacute;e</span></div>
+          <div class="em"><span class="em-val" data-j3-stat="gain" style="color:#4a9">+705 m</span><span class="em-key">D+</span></div>
+          <div class="em"><span class="em-val" data-j3-stat="loss" style="color:#c9773a">&minus;1395 m</span><span class="em-key">D&minus;</span></div>
+          <div class="em"><span class="em-val" data-j3-stat="altitude">1240&ndash;2322 m</span><span class="em-key">altitude</span></div>
+          <div class="em"><span class="em-val" data-j3-stat="difficulty" style="color:var(--moss)">Moyenne</span><span class="em-key">difficult&eacute;</span></div>
         </div>
-        <div class="etape-schedule">
+        <div class="etape-schedule" id="j3-schedule">
           <span class="schedule-item"><strong>08:30</strong>D&eacute;part</span>
           <span class="schedule-item"><strong>10:15</strong>Cr&ecirc;te des Fiz</span>
           <span class="schedule-item"><strong>12:00</strong>Fin de la descente raide</span>
@@ -328,7 +345,7 @@ body{font-family:'DM Sans',sans-serif;font-weight:300;background:var(--snow);col
       </div>
     </div>
     <div class="etape-body">
-      <div class="profile-wrap"><div class="profile-lbl">Profil altim&eacute;trique</div><svg viewBox="0 0 900 128" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:128px;display:block">
+      <div class="profile-wrap"><div class="profile-lbl">Profil altim&eacute;trique</div><div class="profile-summary" id="j3-profile-summary"><span>10,69 km</span><span class="up">+705 m</span><span class="down">&minus;1395 m</span></div><svg id="profile-j3" viewBox="0 0 900 128" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:128px;display:block">
   <defs><linearGradient id="grad-rb-j3" x1="0" x2="0" y1="0" y2="1">
     <stop offset="0%" stop-color="#6b8c5a" stop-opacity="0.4"/>
     <stop offset="100%" stop-color="#6b8c5a" stop-opacity="0.03"/>
@@ -350,7 +367,7 @@ body{font-family:'DM Sans',sans-serif;font-weight:300;background:var(--snow);col
       <div class="wpt-lbl">Points cl&eacute;s</div>
       <table class="wpt-table">
         <thead><tr><th>Dist.</th><th></th><th>Alt.</th><th>Lieu</th><th>Conseil terrain</th></tr></thead>
-        <tbody>
+        <tbody id="j3-points-classic">
           <tr class="wpt-row"><td class="wpt-dist">0,0 km</td><td class="wpt-icon-cell"><span class="wpt-icon" style="background:#1a1714">&#9654;</span></td><td class="wpt-alt">2032 m</td><td class="wpt-name">D&eacute;part Refuge de Plat&eacute;</td><td class="wpt-tip">Secteur sans eau fiable. Partir avec les r&eacute;serves constitu&eacute;es la veille &agrave; Sales.</td></tr>
           <tr class="wpt-row"><td class="wpt-dist">0,4 km</td><td class="wpt-icon-cell"><span class="wpt-icon" style="background:#6b5b95">V</span></td><td class="wpt-alt">2026 m</td><td class="wpt-name">Balcon de Plat&eacute;</td><td class="wpt-tip">Tr&egrave;s belle lumi&egrave;re matinale et vue sur le massif du Mont-Blanc.</td></tr>
           <tr class="wpt-row"><td class="wpt-dist">2,2 km</td><td class="wpt-icon-cell"><span class="wpt-icon" style="background:#c9773a">&#9650;</span></td><td class="wpt-alt">2299 m</td><td class="wpt-name">Cr&ecirc;te des Fiz</td><td class="wpt-tip">Ar&ecirc;te rocheuse expos&eacute;e. Bonne m&eacute;t&eacute;o imp&eacute;rative.</td></tr>
@@ -358,9 +375,19 @@ body{font-family:'DM Sans',sans-serif;font-weight:300;background:var(--snow);col
           <tr class="wpt-row"><td class="wpt-dist">5,5 km</td><td class="wpt-icon-cell"><span class="wpt-icon" style="background:#c9773a">!</span></td><td class="wpt-alt">1535 m</td><td class="wpt-name">Sortie de cr&ecirc;te</td><td class="wpt-tip">Descente rapide, soutenue et fatigante. B&acirc;tons recommand&eacute;s, vigilance genoux.</td></tr>
           <tr class="wpt-row"><td class="wpt-dist">10,7 km</td><td class="wpt-icon-cell"><span class="wpt-icon" style="background:#1a1714">&#127937;</span></td><td class="wpt-alt">1354 m</td><td class="wpt-name">Arriv&eacute;e Plaine-Joux</td><td class="wpt-tip">Retour au parking de la station.</td></tr>
         </tbody>
+        <tbody id="j3-points-variant" style="display:none">
+          <tr class="wpt-row"><td class="wpt-dist">0,0 km</td><td class="wpt-icon-cell"><span class="wpt-icon" style="background:#1a1714">&#9654;</span></td><td class="wpt-alt">2044 m</td><td class="wpt-name">D&eacute;part Refuge de Plat&eacute;</td><td class="wpt-tip">Option courte vers Plaine-Joux. Secteur sans point d&apos;eau fiable.</td></tr>
+          <tr class="wpt-row"><td class="wpt-dist">0,5 km</td><td class="wpt-icon-cell"><span class="wpt-icon" style="background:#c9773a">!</span></td><td class="wpt-alt">2013 m</td><td class="wpt-name">Lapiaz au d&eacute;part</td><td class="wpt-tip">Suivre attentivement les marques et la trace en cas de faible visibilit&eacute;.</td></tr>
+          <tr class="wpt-row"><td class="wpt-dist">1,0 km</td><td class="wpt-icon-cell"><span class="wpt-icon" style="background:#c9773a">!</span></td><td class="wpt-alt">1842 m</td><td class="wpt-name">Descente raide sous Plat&eacute;</td><td class="wpt-tip">Pente soutenue, pierres instables et glissade possible si terrain humide.</td></tr>
+          <tr class="wpt-row"><td class="wpt-dist">2,5 km</td><td class="wpt-icon-cell"><span class="wpt-icon" style="background:#c9773a">!</span></td><td class="wpt-alt">1382 m</td><td class="wpt-name">Bas de la grande descente</td><td class="wpt-tip">Passage exigeant pour les genoux, surtout avec un sac lourd.</td></tr>
+          <tr class="wpt-row"><td class="wpt-dist">5,4 km</td><td class="wpt-icon-cell"><span class="wpt-icon" style="background:#1a1714">&#127937;</span></td><td class="wpt-alt">1354 m</td><td class="wpt-name">Arriv&eacute;e Plaine-Joux</td><td class="wpt-tip">Retour direct au parking de la station.</td></tr>
+        </tbody>
       </table>
+      <div class="action-row" id="j3-variant-download" style="display:none">
+        <a class="action-link" href="itineraire-secondaire.gpx" download>T&eacute;l&eacute;charger le GPX de la variante</a>
+      </div>
     </div>
-    <div class="alternate-card">
+    <div class="alternate-card" id="itineraire-secondaire">
       <div class="alternate-head">
         <div>
           <div class="alternate-title">Itin&eacute;raire secondaire &middot; Refuge de Plat&eacute; &rarr; Plaine-Joux</div>
@@ -431,6 +458,90 @@ body{font-family:'DM Sans',sans-serif;font-weight:300;background:var(--snow);col
 <div class="gps-state" id="gps-state"></div>
 
 <script src="./itineraire-secondaire.js"></script>
+<script>
+(function(){
+  var choice=localStorage.getItem('tour-des-fiz-j3-route')==='variant'?'variant':'classic';
+  var buttons=document.querySelectorAll('[data-j3-route]');
+  buttons.forEach(function(button){
+    button.classList.toggle('is-active',button.getAttribute('data-j3-route')===choice);
+    button.addEventListener('click',function(){
+      var next=button.getAttribute('data-j3-route');
+      if(next===choice)return;
+      localStorage.setItem('tour-des-fiz-j3-route',next);
+      location.hash='vue-ensemble';
+      location.reload();
+    });
+  });
+  var classic={
+    route:null,distance:10.69,gain:705,loss:1395,min:1240,max:2322,
+    duration:'5h 05',difficulty:'Moyenne',color:'#6b8c5a'
+  };
+  var variant={
+    route:window.secondaryRoute.map(function(point){return [point[0],point[1]];}),
+    distance:5.37,gain:255,loss:945,min:1240,max:2044,
+    duration:'2h 30',difficulty:'Soutenue',color:'#8b3f4d'
+  };
+  var selected=choice==='variant'?variant:classic;
+  window.selectedJ3Choice=choice;
+  window.selectedJ3Data=selected;
+  var globalLegend=document.getElementById('global-j3-legend');
+  globalLegend.innerHTML='<span class="ml-dot" style="background:'+selected.color+'"></span>J3 '+
+    (choice==='variant'?'variante courte':'classique')+' &middot; Refuge de Plat&eacute; &rarr; Plaines-Joux';
+  function setStat(name,value){
+    var element=document.querySelector('[data-j3-stat="'+name+'"]');
+    if(element)element.innerHTML=value;
+  }
+  if(choice==='variant'){
+    setStat('distance','5,37 km');
+    setStat('duration','2h 30');
+    setStat('gain','+255 m');
+    setStat('loss','&minus;945 m');
+    setStat('altitude','1240&ndash;2044 m');
+    setStat('difficulty','Soutenue');
+    document.getElementById('j3-profile-summary').innerHTML='<span>5,37 km</span><span class="up">+255 m</span><span class="down">&minus;945 m</span>';
+    document.getElementById('j3-points-classic').style.display='none';
+    document.getElementById('j3-points-variant').style.display='table-row-group';
+    document.getElementById('j3-variant-download').style.display='flex';
+    document.getElementById('j3-schedule').innerHTML=
+      '<span class="schedule-item"><strong>08:30</strong>D&eacute;part</span>'+
+      '<span class="schedule-item"><strong>09:00</strong>Grande descente</span>'+
+      '<span class="schedule-item"><strong>11:00</strong>Arriv&eacute;e vis&eacute;e</span>'+
+      '<span class="schedule-item"><strong>06:41 / 20:30</strong>Lever / coucher</span>';
+    document.getElementById('total-distance').innerHTML='30<span class="cs-unit">,32 km</span>';
+    document.getElementById('total-gain').innerHTML='+2326<span class="cs-unit"> m</span>';
+    document.getElementById('total-duration').innerHTML='15<span class="cs-unit">h35</span>';
+    document.getElementById('global-profile-summary').innerHTML='<span>30,32 km</span><span class="up">+2326 m</span><span class="down">&minus;2329 m</span>';
+    var svg=document.getElementById('profile-j3');
+    var route=window.secondaryRoute;
+    var cumulative=0;
+    var points=route.map(function(point,index){
+      if(index){
+        var a=route[index-1],b=point,r=6371,p=Math.PI/180;
+        var dLat=(b[0]-a[0])*p,dLon=(b[1]-a[1])*p;
+        var lat1=a[0]*p,lat2=b[0]*p;
+        var h=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(lat1)*Math.cos(lat2)*Math.sin(dLon/2)*Math.sin(dLon/2);
+        cumulative+=2*r*Math.asin(Math.sqrt(h));
+      }
+      return {km:cumulative,alt:point[2]};
+    });
+    var left=35,right=865,top=8,bottom=102,min=1240,max=2044;
+    var x=function(km){return left+(km/points[points.length-1].km)*(right-left);};
+    var y=function(alt){return bottom-((alt-min)/(max-min))*(bottom-top);};
+    var coordinates=points.map(function(point){return x(point.km).toFixed(1)+','+y(point.alt).toFixed(1);}).join(' ');
+    var grid=[1240,1508,1776,2044].map(function(alt){
+      var yy=y(alt);
+      return '<line x1="'+left+'" y1="'+yy+'" x2="'+right+'" y2="'+yy+'" stroke="#eadfe1" stroke-width=".7"/>'+
+        '<text x="32" y="'+(yy+3)+'" text-anchor="end" font-family="DM Mono,monospace" font-size="7.5" fill="#aaa">'+alt+'</text>';
+    }).join('');
+    svg.innerHTML=grid+
+      '<path d="M '+coordinates.replace(/ /g,' L ')+' L '+right+',110 L '+left+',110 Z" fill="#8b3f4d" fill-opacity=".18"/>'+
+      '<polyline points="'+coordinates+'" fill="none" stroke="#8b3f4d" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>'+
+      '<line x1="'+left+'" y1="108" x2="'+right+'" y2="108" stroke="#ccc" stroke-width=".8"/>'+
+      '<text x="'+left+'" y="120" font-family="DM Mono,monospace" font-size="7.5" fill="#aaa">0</text>'+
+      '<text x="'+right+'" y="120" text-anchor="end" font-family="DM Mono,monospace" font-size="7.5" fill="#aaa">5,37 km</text>';
+  }
+})();
+</script>
 <script>
 (function() {
   var j1=[[45.95036, 6.740284], [45.949654, 6.741296], [45.949425, 6.741842], [45.949183, 6.744306], [45.949278, 6.745906], [45.94929, 6.746331], [45.949051, 6.747805], [45.948939, 6.748395], [45.949266, 6.748494], [45.949515, 6.748472], [45.949558, 6.748642], [45.94924, 6.748707], [45.949062, 6.748913], [45.949152, 6.749124], [45.949588, 6.749062], [45.949755, 6.749131], [45.949559, 6.74963], [45.949308, 6.750279], [45.949316, 6.750552], [45.94961, 6.751419], [45.949449, 6.751742], [45.949062, 6.752404], [45.948915, 6.753124], [45.948615, 6.753401], [45.948773, 6.753347], [45.948768, 6.754042], [45.949082, 6.75458], [45.949524, 6.754803], [45.949684, 6.755239], [45.949618, 6.755768], [45.949953, 6.756343], [45.950073, 6.757187], [45.950209, 6.758129], [45.949909, 6.75918], [45.949495, 6.759875], [45.949488, 6.760156], [45.949447, 6.760728], [45.949473, 6.761145], [45.949536, 6.761691], [45.949901, 6.761952], [45.950122, 6.762066], [45.950402, 6.76264], [45.950601, 6.762236], [45.950842, 6.763009], [45.951001, 6.763216], [45.951211, 6.763605], [45.951452, 6.76423], [45.951581, 6.764603], [45.952128, 6.765713], [45.952609, 6.766433], [45.952819, 6.766897], [45.95328, 6.76763], [45.953555, 6.768231], [45.953698, 6.768816], [45.95389, 6.769891], [45.954105, 6.770062], [45.954406, 6.770148], [45.955081, 6.770319], [45.95544, 6.770995], [45.955999, 6.771471], [45.956215, 6.77237], [45.95639, 6.773325], [45.956428, 6.773835], [45.95669, 6.774054], [45.95716, 6.774158], [45.957378, 6.774301], [45.957588, 6.774475], [45.957937, 6.775689], [45.957793, 6.776127], [45.957843, 6.776406], [45.958016, 6.776771], [45.958195, 6.776977], [45.958385, 6.777001], [45.958557, 6.777314], [45.958827, 6.777969], [45.958972, 6.778098], [45.958909, 6.778586], [45.959493, 6.778717], [45.959746, 6.778792], [45.959989, 6.778862], [45.960154, 6.778968], [45.960488, 6.779246], [45.960796, 6.779598], [45.960838, 6.779983], [45.960847, 6.780189], [45.960851, 6.780592], [45.960884, 6.780915], [45.961043, 6.781327], [45.960987, 6.781538], [45.961083, 6.78176], [45.961085, 6.781821], [45.961215, 6.781847], [45.96124, 6.782017], [45.961231, 6.78209], [45.961288, 6.782316], [45.961348, 6.782432], [45.961442, 6.782454], [45.96146, 6.782731], [45.961851, 6.783374], [45.961999, 6.783455], [45.961772, 6.783893], [45.961547, 6.783855], [45.961068, 6.783882], [45.960403, 6.783977], [45.960117, 6.784159], [45.960132, 6.78435], [45.960212, 6.784505], [45.960316, 6.78452], [45.960432, 6.784683], [45.960422, 6.784812], [45.960512, 6.785207], [45.960589, 6.785289], [45.960638, 6.785456], [45.960717, 6.785578], [45.960743, 6.78582], [45.960681, 6.786488], [45.960749, 6.786826], [45.960879, 6.787107], [45.961003, 6.787479], [45.961119, 6.787937], [45.961257, 6.788466], [45.961377, 6.788891], [45.961373, 6.789186], [45.961521, 6.78931], [45.961788, 6.789808], [45.961843, 6.790016], [45.962086, 6.791197], [45.962268, 6.791938], [45.962564, 6.792395], [45.962833, 6.792548], [45.963034, 6.792853], [45.963105, 6.792916], [45.963387, 6.793204], [45.963898, 6.79334], [45.964505, 6.793721], [45.964728, 6.793902], [45.965072, 6.793999], [45.965326, 6.794124], [45.965606, 6.794161], [45.966484, 6.7948], [45.966929, 6.79547], [45.967199, 6.79589], [45.967545, 6.796151], [45.968021, 6.796169], [45.96857, 6.796575], [45.969063, 6.796374], [45.969835, 6.796302], [45.970514, 6.796692], [45.971119, 6.797016], [45.971511, 6.797586], [45.97181, 6.797868], [45.972604, 6.798361], [45.973316, 6.798969], [45.974493, 6.800149], [45.974749, 6.800295], [45.975403, 6.800667], [45.975596, 6.800471], [45.975846, 6.800131], [45.976334, 6.799305], [45.976231, 6.79925], [45.976115, 6.798997], [45.976199, 6.798179], [45.976285, 6.797885], [45.976349, 6.797788], [45.976344, 6.796841], [45.976521, 6.796583], [45.976819, 6.796762], [45.976905, 6.79678], [45.977198, 6.796755], [45.977274, 6.796419], [45.977577, 6.796563], [45.977793, 6.796893], [45.977898, 6.797232], [45.978083, 6.797579], [45.97824, 6.797188], [45.978294, 6.796813], [45.978473, 6.796648], [45.979185, 6.797203], [45.979541, 6.797525], [45.979673, 6.7977], [45.979813, 6.797026], [45.979838, 6.79683], [45.979929, 6.796778], [45.980021, 6.796549], [45.980092, 6.796479], [45.980492, 6.796528], [45.980868, 6.796868], [45.981733, 6.79774], [45.982262, 6.797838], [45.982984, 6.79762], [45.983506, 6.79784], [45.984287, 6.797875], [45.984486, 6.798038], [45.984691, 6.798214], [45.984951, 6.798227], [45.985348, 6.79824], [45.985708, 6.799262], [45.986011, 6.79946], [45.98613, 6.799692], [45.987128, 6.799753], [45.987509, 6.799678], [45.987955, 6.799201], [45.988011, 6.799298], [45.988182, 6.799042], [45.988713, 6.798709], [45.989077, 6.79869], [45.989496, 6.797334], [45.990356, 6.796396], [45.990631, 6.79629], [45.991045, 6.795831], [45.991233, 6.795616]];
@@ -609,6 +720,23 @@ body{font-family:'DM Sans',sans-serif;font-weight:300;background:var(--snow);col
       .addTo(map)
       .bindPopup('<strong>'+poi.name+'</strong><br>'+poi.detail);
   }
+  function linkTraceToSection(layer,sectionId,label){
+    layer.setStyle({interactive:true});
+    layer.on('mouseover',function(){layer.setStyle({weight:6});});
+    layer.on('mouseout',function(){layer.setStyle({weight:4});});
+    layer.on('click',function(){
+      var section=document.getElementById(sectionId);
+      if(section){
+        history.replaceState(null,'','#'+sectionId);
+        section.scrollIntoView({behavior:'smooth',block:'start'});
+      }
+    });
+    layer.bindTooltip(label+' · cliquer pour ouvrir',{sticky:true,direction:'top'});
+    if(layer.getElement())layer.getElement().style.cursor='pointer';
+    layer.on('add',function(){
+      if(layer.getElement())layer.getElement().style.cursor='pointer';
+    });
+  }
   var pois1=[
     {km:0,name:'Parking de Plaine-Joux',detail:'D&eacute;part et retour de la boucle.',color:'#1a1714',symbol:'P'},
     {km:4.8,name:'Passage de la Chorde',detail:'&Eacute;chelles, cha&icirc;nes, barreaux et mains courantes. Peut poser probl&egrave;me aux personnes sujettes au vertige.',color:'#c9773a',symbol:'!'},
@@ -639,24 +767,27 @@ body{font-family:'DM Sans',sans-serif;font-weight:300;background:var(--snow);col
     {km:1,name:'Descente raide sous Plat&eacute;',detail:'Pente soutenue, pierres instables et risque de glissade si humide.',color:'#c9773a',symbol:'!'},
     {km:2.5,name:'Bas de la grande descente',detail:'Passage exigeant pour les genoux, surtout avec un sac lourd.',color:'#c9773a',symbol:'!'}
   ];
-  var mapG=L.map('map-global',{scrollWheelZoom:true});
-  var layersGlobal=addBaseLayers(mapG);
-  addLocateControl(mapG);
-  L.polyline(j1,{color:'#7eb8c9',weight:4,opacity:.9}).addTo(mapG);
-  L.polyline(j2,{color:'#c9773a',weight:4,opacity:.9}).addTo(mapG);
-  L.polyline(j3,{color:'#6b8c5a',weight:4,opacity:.9}).addTo(mapG);
   var secondaryLatLngs=window.secondaryRoute.map(function(point){return [point[0],point[1]];});
-  var secondaryGlobal=L.polyline(secondaryLatLngs,{color:'#8b3f4d',weight:4,opacity:.9,dashArray:'8 7'}).addTo(mapG);
-  layersGlobal.addOverlay(secondaryGlobal,'Itin&eacute;raire secondaire J3');
-  secondaryHazards.forEach(function(poi){addPoi(mapG,secondaryLatLngs,poi);});
+  var useJ3Variant=window.selectedJ3Choice==='variant';
+  var activeJ3=useJ3Variant?secondaryLatLngs:j3;
+  var activeJ3Color=useJ3Variant?'#8b3f4d':'#6b8c5a';
+  var activeJ3Pois=useJ3Variant?secondaryHazards:pois3;
+  var mapG=L.map('map-global',{scrollWheelZoom:true});
+  addBaseLayers(mapG);
+  addLocateControl(mapG);
+  var globalJ1=L.polyline(j1,{color:'#7eb8c9',weight:4,opacity:.9}).addTo(mapG);
+  var globalJ2=L.polyline(j2,{color:'#c9773a',weight:4,opacity:.9}).addTo(mapG);
+  var globalJ3=L.polyline(activeJ3,{color:activeJ3Color,weight:4,opacity:.9,dashArray:useJ3Variant?'8 7':null}).addTo(mapG);
+  linkTraceToSection(globalJ1,'etape-1','Jour 1');
+  linkTraceToSection(globalJ2,'etape-2','Jour 2');
+  linkTraceToSection(globalJ3,'etape-3','Jour 3');
   L.marker([45.95036, 6.740284],{icon:mkIcon('#1a1714','&gt;')}).addTo(mapG).bindPopup('Depart - Plaines-Joux 1356m');
   L.marker([45.991233, 6.795616],{icon:mkIcon('#7eb8c9','*')}).addTo(mapG).bindPopup('Bivouac J1 - Lac Anterne 2064m');
   L.marker([45.966158, 6.719612],{icon:mkIcon('#c9773a','*')}).addTo(mapG).bindPopup('Bivouac J2 - Refuge Plate 2084m');
   L.marker([45.95005, 6.740675],{icon:mkIcon('#1a1714','X')}).addTo(mapG).bindPopup('Arrivee - Plaines-Joux 1354m');
-  pois1.concat(pois2,pois3).forEach(function(poi){
-    var track=pois1.indexOf(poi)>=0?j1:(pois2.indexOf(poi)>=0?j2:j3);
-    addPoi(mapG,track,poi);
-  });
+  pois1.forEach(function(poi){addPoi(mapG,j1,poi);});
+  pois2.forEach(function(poi){addPoi(mapG,j2,poi);});
+  activeJ3Pois.forEach(function(poi){addPoi(mapG,activeJ3,poi);});
   var profileMapCursor=L.circleMarker(j1[0],{
     radius:8,
     color:'#1a1714',
@@ -668,11 +799,11 @@ body{font-family:'DM Sans',sans-serif;font-weight:300;background:var(--snow);col
   }).addTo(mapG);
   window.roadbookMapState={
     map:mapG,
-    tracks:[j1,j2,j3],
+    tracks:[j1,j2,activeJ3],
     pointAtDistance:pointAtDistance,
     cursor:profileMapCursor
   };
-  var boundsGlobal=L.latLngBounds(j1.concat(j2).concat(j3));
+  var boundsGlobal=L.latLngBounds(j1.concat(j2).concat(activeJ3));
   mapG.fitBounds(boundsGlobal,{padding:[30,30]});
   addFitControl(mapG,boundsGlobal,[30,30]);
   var m1=L.map('map-j1',{scrollWheelZoom:true,zoomControl:false});
@@ -696,40 +827,20 @@ body{font-family:'DM Sans',sans-serif;font-weight:300;background:var(--snow);col
   m2.fitBounds(l2.getBounds(),{padding:[18,18]});
   addFitControl(m2,l2.getBounds(),[18,18]);
   var m3=L.map('map-j3',{scrollWheelZoom:true,zoomControl:false});
-  var layersJ3=addBaseLayers(m3);
+  addBaseLayers(m3);
   addLocateControl(m3);
-  var l3=L.polyline(j3,{color:'#6b8c5a',weight:3,opacity:.9}).addTo(m3);
-  var secondaryJ3=L.polyline(secondaryLatLngs,{color:'#8b3f4d',weight:4,opacity:.95,dashArray:'8 7'}).addTo(m3);
-  layersJ3.addOverlay(secondaryJ3,'Itin&eacute;raire secondaire');
-  secondaryHazards.forEach(function(poi){addPoi(m3,secondaryLatLngs,poi);});
+  var l3=L.polyline(activeJ3,{color:activeJ3Color,weight:3,opacity:.95,dashArray:useJ3Variant?'8 7':null}).addTo(m3);
   L.marker([45.966158, 6.719612],{icon:mkIcon('#c9773a','&gt;')}).addTo(m3);
   L.marker([45.95005, 6.740675],{icon:mkIcon('#1a1714','X')}).addTo(m3);
-  pois3.forEach(function(poi){addPoi(m3,j3,poi);});
-  var cursor3=L.circleMarker(j3[0],{radius:7,color:'#6b8c5a',weight:3,fillColor:'#faf8f4',fillOpacity:0,opacity:0,interactive:false}).addTo(m3);
+  activeJ3Pois.forEach(function(poi){addPoi(m3,activeJ3,poi);});
+  var cursor3=L.circleMarker(activeJ3[0],{radius:7,color:activeJ3Color,weight:3,fillColor:'#faf8f4',fillOpacity:0,opacity:0,interactive:false}).addTo(m3);
   m3.fitBounds(l3.getBounds(),{padding:[18,18]});
   addFitControl(m3,l3.getBounds(),[18,18]);
-  var mSecondary=L.map('map-secondary',{scrollWheelZoom:true});
-  addBaseLayers(mSecondary);
-  addLocateControl(mSecondary);
-  var secondaryDedicated=L.polyline(secondaryLatLngs,{color:'#8b3f4d',weight:4,opacity:.95,dashArray:'8 7'}).addTo(mSecondary);
-  L.marker(secondaryLatLngs[0],{icon:mkIcon('#526b8a','R')}).addTo(mSecondary).bindPopup('D&eacute;part &middot; Refuge de Plat&eacute;');
-  L.marker(secondaryLatLngs[secondaryLatLngs.length-1],{icon:mkIcon('#1a1714','X')}).addTo(mSecondary).bindPopup('Arriv&eacute;e &middot; Plaine-Joux');
-  secondaryHazards.forEach(function(poi){addPoi(mSecondary,secondaryLatLngs,poi);});
-  var secondaryBounds=secondaryDedicated.getBounds();
-  mSecondary.fitBounds(secondaryBounds,{padding:[22,22]});
-  addFitControl(mSecondary,secondaryBounds,[22,22]);
   window.roadbookDailyMaps=[
     {map:m1,track:j1,cursor:cursor1},
     {map:m2,track:j2,cursor:cursor2},
-    {map:m3,track:j3,cursor:cursor3}
+    {map:m3,track:activeJ3,cursor:cursor3}
   ];
-  window.secondaryMapState={
-    map:mSecondary,
-    track:secondaryLatLngs,
-    cursor:L.circleMarker(secondaryLatLngs[0],{
-      radius:7,color:'#8b3f4d',weight:3,fillColor:'#faf8f4',fillOpacity:0,opacity:0,interactive:false
-    }).addTo(mSecondary)
-  };
 })();
 </script>
 <script>
@@ -763,7 +874,7 @@ body{font-family:'DM Sans',sans-serif;font-weight:300;background:var(--snow);col
   var configs=[
     {mapId:'map-j1',distance:10.01,min:1268,max:2255,color:'#7eb8c9'},
     {mapId:'map-j2',distance:14.94,min:1436,max:2353,color:'#c9773a'},
-    {mapId:'map-j3',distance:10.69,min:1240,max:2322,color:'#6b8c5a'}
+    {mapId:'map-j3',distance:window.selectedJ3Data.distance,min:window.selectedJ3Data.min,max:window.selectedJ3Data.max,color:window.selectedJ3Data.color}
   ];
   var ns='http://www.w3.org/2000/svg';
   function svgEl(name,attrs,parent,text){
@@ -1004,7 +1115,7 @@ body{font-family:'DM Sans',sans-serif;font-weight:300;background:var(--snow);col
   var profiles=[
     {svg:document.querySelector('#map-j1').closest('.etape-body').querySelector('svg'),distance:10.01,min:1268,max:2255,color:'#7eb8c9'},
     {svg:document.querySelector('#map-j2').closest('.etape-body').querySelector('svg'),distance:14.94,min:1436,max:2353,color:'#c9773a'},
-    {svg:document.querySelector('#map-j3').closest('.etape-body').querySelector('svg'),distance:10.69,min:1240,max:2322,color:'#6b8c5a'}
+    {svg:document.querySelector('#map-j3').closest('.etape-body').querySelector('svg'),distance:window.selectedJ3Data.distance,min:window.selectedJ3Data.min,max:window.selectedJ3Data.max,color:window.selectedJ3Data.color}
   ];
   var total=profiles.reduce(function(sum,p){return sum+p.distance;},0);
   var left=52,right=975,top=12,bottom=145,minAlt=1200,maxAlt=2400;

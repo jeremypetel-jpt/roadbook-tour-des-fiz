@@ -1,4 +1,4 @@
-const CACHE_NAME = "tour-des-fiz-v19";
+const CACHE_NAME = "tour-des-fiz-v23";
 const CORE_FILES = [
   "./",
   "./index.html",

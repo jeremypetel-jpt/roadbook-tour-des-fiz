@@ -3,7 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#1a1714">
 <title>Roadbook - Tour des Fiz</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
@@ -38,12 +41,20 @@ body{font-family:'DM Sans',sans-serif;font-weight:300;background:var(--snow);col
 .etape-date{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.15em;text-transform:uppercase;color:var(--text-muted);margin-bottom:.3rem}
 .etape-name{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:var(--stone);margin-bottom:.75rem}
 .etape-metrics{display:flex;gap:1.5rem;flex-wrap:wrap}
+.etape-schedule{display:flex;gap:1rem;flex-wrap:wrap;margin-top:.85rem;padding-top:.75rem;border-top:1px solid rgba(26,23,20,.09)}
+.schedule-item{font-family:'DM Mono',monospace;font-size:.58rem;color:var(--text-muted)}
+.schedule-item strong{display:block;color:var(--stone);font-size:.7rem;margin-bottom:.1rem}
 .em{display:flex;flex-direction:column;gap:.1rem}
 .em-val{font-family:'DM Mono',monospace;font-size:.82rem;font-weight:500;color:var(--stone)}
 .em-key{font-family:'DM Mono',monospace;font-size:.52rem;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted)}
 .etape-body{display:grid;grid-template-columns:1fr 1fr;gap:0}
 .profile-wrap{padding:1.2rem 1.5rem;border-right:1px solid rgba(26,23,20,.06)}
 .profile-lbl{font-family:'DM Mono',monospace;font-size:.56rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text-muted);margin-bottom:.6rem}
+.profile-wrap svg{touch-action:none;cursor:grab}
+.profile-wrap svg.is-dragging{cursor:grabbing}
+.daily-profile-toolbar{display:flex;justify-content:flex-end;gap:.25rem;margin:-1.8rem 0 .4rem}
+.daily-profile-tool{width:28px;height:28px;border:1px solid rgba(26,23,20,.16);background:var(--snow);color:var(--stone);border-radius:3px;cursor:pointer;font-size:.9rem}
+.daily-profile-tool:hover{border-color:var(--summit)}
 .map-wrap{padding:1.2rem 1.5rem}
 .etape-map{width:100%;height:200px;border-radius:3px;border:1px solid rgba(26,23,20,.08);z-index:0}
 .wpt-section{padding:0 1.5rem 1.5rem}
@@ -69,6 +80,29 @@ body{font-family:'DM Sans',sans-serif;font-weight:300;background:var(--snow);col
 .ic-title{font-family:'DM Mono',monospace;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--text-muted);margin-bottom:.4rem}
 .ic-text{font-size:.8rem;line-height:1.6;color:var(--rock)}
 .ic-text li{margin-left:1rem;margin-bottom:.2rem}
+.action-row{display:flex;gap:.65rem;flex-wrap:wrap;margin-top:1rem}
+.action-link,.install-btn{display:inline-flex;align-items:center;gap:.4rem;min-height:38px;padding:.6rem .8rem;border:1px solid rgba(26,23,20,.18);border-radius:3px;background:var(--snow);color:var(--stone);font-family:'DM Mono',monospace;font-size:.62rem;text-decoration:none;cursor:pointer}
+.action-link:hover,.install-btn:hover{border-color:var(--summit)}
+.install-btn{display:none}
+.offline-note{margin-top:1rem;padding:.75rem 1rem;background:rgba(126,184,201,.12);border-left:3px solid var(--glacier);font-size:.75rem;line-height:1.5}
+.map-help{font-family:'DM Mono',monospace;font-size:.58rem;color:var(--text-muted);margin-top:.7rem}
+.global-profile{margin-top:1.5rem;padding:1rem 1.25rem;background:white;border:1px solid rgba(26,23,20,.1);border-radius:4px}
+.global-profile svg{display:block;width:100%;height:auto;min-height:150px}
+.global-profile svg{touch-action:none;cursor:grab}
+.global-profile svg.is-dragging{cursor:grabbing}
+.profile-toolbar{display:flex;justify-content:flex-end;gap:.3rem;margin:-1.6rem 0 .4rem}
+.profile-tool{width:30px;height:30px;border:1px solid rgba(26,23,20,.18);background:var(--snow);color:var(--stone);border-radius:3px;font-size:1rem;cursor:pointer}
+.profile-tool:hover{border-color:var(--summit)}
+.poi-key{display:flex;gap:1rem;flex-wrap:wrap;margin-top:.8rem}
+.poi-key span{font-family:'DM Mono',monospace;font-size:.58rem;color:var(--text-muted)}
+.poi-key b{display:inline-flex;align-items:center;justify-content:center;width:19px;height:19px;border-radius:50%;color:white;margin-right:.3rem;font-size:.58rem}
+.leaflet-control-layers{font-family:'DM Sans',sans-serif;font-size:.76rem}
+.leaflet-control-fit a{display:flex;align-items:center;justify-content:center;width:30px;height:30px;font-size:18px;font-weight:500;color:#1a1714;text-decoration:none;background:white}
+.leaflet-control-fit a:hover{background:#f4f1ec}
+.leaflet-control-locate a{display:flex;align-items:center;justify-content:center;width:30px;height:30px;font-size:17px;color:#1a1714;text-decoration:none;background:white}
+.leaflet-control-locate a.is-active{color:#287b5a;background:#edf6f1}
+.network-state{position:fixed;right:1rem;bottom:1rem;z-index:1000;background:var(--stone);color:var(--mist);padding:.55rem .75rem;border-radius:3px;font-family:'DM Mono',monospace;font-size:.58rem;display:none}
+.gps-state{position:fixed;right:1rem;bottom:3.7rem;z-index:1000;background:var(--stone);color:var(--mist);padding:.55rem .75rem;border-radius:3px;font-family:'DM Mono',monospace;font-size:.58rem;display:none;max-width:250px}
 .footer{background:var(--stone);color:var(--mist);padding:1.5rem 3rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
 .footer-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;font-style:italic;color:var(--summit-light)}
 .footer-links{display:flex;gap:1.5rem;flex-wrap:wrap}
@@ -110,6 +144,23 @@ body{font-family:'DM Sans',sans-serif;font-weight:300;background:var(--snow);col
     <span class="ml-item"><span class="ml-dot" style="background:#6b8c5a"></span>J3 &middot; Refuge de Plat&eacute; &rarr; Plaines-Joux</span>
   </div>
   <div id="map-global"></div>
+  <div class="poi-key">
+    <span><b style="background:#287b5a">E</b>Eau</span>
+    <span><b style="background:#c9773a">!</b>Passage d&eacute;licat</span>
+    <span><b style="background:#526b8a">R</b>Refuge / bivouac</span>
+    <span><b style="background:#6b5b95">V</b>Point de vue</span>
+    <span><b style="background:#1a1714">P</b>Parking</span>
+  </div>
+  <p class="map-help">Utilisez le bouton des couches, en haut &agrave; droite de la carte, pour changer de fond.</p>
+  <div class="global-profile">
+    <div class="profile-lbl">Profil altim&eacute;trique total &middot; 35,6 km</div>
+    <div class="profile-toolbar">
+      <button class="profile-tool" id="profile-zoom-in" type="button" title="Zoom avant" aria-label="Zoom avant">+</button>
+      <button class="profile-tool" id="profile-zoom-out" type="button" title="Zoom arri&egrave;re" aria-label="Zoom arri&egrave;re">&minus;</button>
+      <button class="profile-tool" id="profile-reset" type="button" title="Afficher le profil complet" aria-label="Afficher le profil complet">&#x26F6;</button>
+    </div>
+    <svg id="profile-global" viewBox="0 0 1000 190" preserveAspectRatio="none" role="img" aria-label="Profil altim&eacute;trique total du Tour des Fiz"></svg>
+  </div>
 </section>
 
 <section class="sec-wrap" style="background:var(--mist)">
@@ -131,6 +182,14 @@ body{font-family:'DM Sans',sans-serif;font-weight:300;background:var(--snow);col
           <div class="em"><span class="em-val" style="color:#c9773a">&minus;328 m</span><span class="em-key">D&minus;</span></div>
           <div class="em"><span class="em-val">1268&ndash;2255 m</span><span class="em-key">altitude</span></div>
           <div class="em"><span class="em-val" style="color:var(--glacier)">Difficile</span><span class="em-key">difficult&eacute;</span></div>
+        </div>
+        <div class="etape-schedule">
+          <span class="schedule-item"><strong>10:00</strong>D&eacute;part</span>
+          <span class="schedule-item"><strong>13:30</strong>Mo&euml;de / mont&eacute;e finale</span>
+          <span class="schedule-item"><strong>15:00</strong>Col d&apos;Anterne</span>
+          <span class="schedule-item"><strong>16:15</strong>Arriv&eacute;e vis&eacute;e</span>
+          <span class="schedule-item"><strong>17:30</strong>Heure limite</span>
+          <span class="schedule-item"><strong>06:38 / 20:34</strong>Lever / coucher</span>
         </div>
       </div>
     </div>
@@ -157,7 +216,13 @@ body{font-family:'DM Sans',sans-serif;font-weight:300;background:var(--snow);col
       <div class="wpt-lbl">Points cl&eacute;s</div>
       <table class="wpt-table">
         <thead><tr><th>Dist.</th><th></th><th>Alt.</th><th>Lieu</th><th>Conseil terrain</th></tr></thead>
-        <tbody><tr class="wpt-row"><td class="wpt-dist">0,0 km</td><td class="wpt-icon-cell"><span class="wpt-icon" style="background:#1a1714">&#9654;</span></td><td class="wpt-alt">1356 m</td><td class="wpt-name">Depart Plaines-Joux</td><td class="wpt-tip">Parking du telepherique. Prendre le sentier direction nord-est vers Sales.</td></tr><tr class="wpt-row"><td class="wpt-dist">1,4 km</td><td class="wpt-icon-cell"><span class="wpt-icon" style="background:#888">&#8600;</span></td><td class="wpt-alt">1266 m</td><td class="wpt-name">Passage bas - Ru de Sales</td><td class="wpt-tip">Traversee du ruisseau, point le plus bas de l'etape. Terrain glissant apres pluie.</td></tr><tr class="wpt-row"><td class="wpt-dist">4,4 km</td><td class="wpt-icon-cell"><span class="wpt-icon" style="background:#4a9">&#9651;</span></td><td class="wpt-alt">1557 m</td><td class="wpt-name">Chalets de Sales</td><td class="wpt-tip">Replat et premiers alpages. Possible point d'eau. Vue sur la face nord du massif.</td></tr><tr class="wpt-row"><td class="wpt-dist">5,6 km</td><td class="wpt-icon-cell"><span class="wpt-icon" style="background:#c9773a">&#8599;</span></td><td class="wpt-alt">1903 m</td><td class="wpt-name">Col de Sales</td><td class="wpt-tip">Passage cle de la montee. Terrain mineral, cairns. Vue sur le vallon d'Anterne.</td></tr><tr class="wpt-row"><td class="wpt-dist">8,5 km</td><td class="wpt-icon-cell"><span class="wpt-icon" style="background:#c9773a">&#9650;</span></td><td class="wpt-alt">2255 m</td><td class="wpt-name">Crete avant Anterne</td><td class="wpt-tip">Point haut de l'etape. Panorama sur le Mont-Blanc par temps clair.</td></tr><tr class="wpt-row"><td class="wpt-dist">10,0 km</td><td class="wpt-icon-cell"><span class="wpt-icon" style="background:#7eb8c9">&#9978;</span></td><td class="wpt-alt">2064 m</td><td class="wpt-name">Lac d'Anterne - Bivouac</td><td class="wpt-tip">Bivouac au bord du lac. Zone plate rive est. Eau disponible (filtrer). Lever tot : reserve naturelle.</td></tr></tbody>
+        <tbody>
+          <tr class="wpt-row"><td class="wpt-dist">0,0 km</td><td class="wpt-icon-cell"><span class="wpt-icon" style="background:#1a1714">&#9654;</span></td><td class="wpt-alt">1356 m</td><td class="wpt-name">D&eacute;part Plaine-Joux</td><td class="wpt-tip">Parking de la station. Suivre la direction des chalets d&apos;Ay&egrave;res et de Mo&euml;de-Anterne.</td></tr>
+          <tr class="wpt-row"><td class="wpt-dist">4,4 km</td><td class="wpt-icon-cell"><span class="wpt-icon" style="background:#6b5b95">V</span></td><td class="wpt-alt">1557 m</td><td class="wpt-name">Alpages d&apos;Ay&egrave;res</td><td class="wpt-tip">Belle ouverture sur le massif du Mont-Blanc et les falaises des Fiz.</td></tr>
+          <tr class="wpt-row"><td class="wpt-dist">7,0 km</td><td class="wpt-icon-cell"><span class="wpt-icon" style="background:#287b5a">E</span></td><td class="wpt-alt">1996 m</td><td class="wpt-name">Refuge de Mo&euml;de-Anterne</td><td class="wpt-tip">Eau potable annonc&eacute;e en p&eacute;riode de gardiennage. Le refuge peut demander un petit d&eacute;tour.</td></tr>
+          <tr class="wpt-row"><td class="wpt-dist">8,5 km</td><td class="wpt-icon-cell"><span class="wpt-icon" style="background:#6b5b95">V</span></td><td class="wpt-alt">2257 m</td><td class="wpt-name">Col d&apos;Anterne</td><td class="wpt-tip">Point haut avec panorama sur le lac d&apos;Anterne, les Fiz et le massif du Mont-Blanc.</td></tr>
+          <tr class="wpt-row"><td class="wpt-dist">10,0 km</td><td class="wpt-icon-cell"><span class="wpt-icon" style="background:#7eb8c9">&#9978;</span></td><td class="wpt-alt">2064 m</td><td class="wpt-name">Lac d&apos;Anterne - Bivouac</td><td class="wpt-tip">Eau naturelle &agrave; traiter ou filtrer. Baignade interdite dans la r&eacute;serve.</td></tr>
+        </tbody>
       </table>
     </div>
   </div>
@@ -177,6 +242,14 @@ body{font-family:'DM Sans',sans-serif;font-weight:300;background:var(--snow);col
           <div class="em"><span class="em-val" style="color:#c9773a">&minus;1056 m</span><span class="em-key">D&minus;</span></div>
           <div class="em"><span class="em-val">1436&ndash;2355 m</span><span class="em-key">altitude</span></div>
           <div class="em"><span class="em-val" style="color:var(--summit)">Difficile</span><span class="em-key">difficult&eacute;</span></div>
+        </div>
+        <div class="etape-schedule">
+          <span class="schedule-item"><strong>08:30</strong>D&eacute;part</span>
+          <span class="schedule-item"><strong>09:45</strong>Alfred Wills</span>
+          <span class="schedule-item"><strong>13:00</strong>Refuge de Sales</span>
+          <span class="schedule-item"><strong>16:00</strong>Col de la Portette</span>
+          <span class="schedule-item"><strong>16:45</strong>Arriv&eacute;e vis&eacute;e</span>
+          <span class="schedule-item"><strong>06:39 / 20:32</strong>Lever / coucher</span>
         </div>
       </div>
     </div>
@@ -203,7 +276,14 @@ body{font-family:'DM Sans',sans-serif;font-weight:300;background:var(--snow);col
       <div class="wpt-lbl">Points cl&eacute;s</div>
       <table class="wpt-table">
         <thead><tr><th>Dist.</th><th></th><th>Alt.</th><th>Lieu</th><th>Conseil terrain</th></tr></thead>
-        <tbody><tr class="wpt-row"><td class="wpt-dist">0,0 km</td><td class="wpt-icon-cell"><span class="wpt-icon" style="background:#1a1714">&#9654;</span></td><td class="wpt-alt">2064 m</td><td class="wpt-name">Depart Lac d'Anterne</td><td class="wpt-tip">Reprendre le sentier vers l'ouest en longeant la rive nord du lac.</td></tr><tr class="wpt-row"><td class="wpt-dist">1,2 km</td><td class="wpt-icon-cell"><span class="wpt-icon" style="background:#888">&#8599;</span></td><td class="wpt-alt">2116 m</td><td class="wpt-name">Arete au-dessus du lac</td><td class="wpt-tip">Courte montee sur l'arete. Premiers cairns du desert. Terrain mineral.</td></tr><tr class="wpt-row"><td class="wpt-dist">4,1 km</td><td class="wpt-icon-cell"><span class="wpt-icon" style="background:#4a9">&#8600;</span></td><td class="wpt-alt">1741 m</td><td class="wpt-name">Chalets de Villy</td><td class="wpt-tip">Descente soutenue. Replat avant la grande descente. Point d'eau possible.</td></tr><tr class="wpt-row"><td class="wpt-dist">6,6 km</td><td class="wpt-icon-cell"><span class="wpt-icon" style="background:#888">&#8600;</span></td><td class="wpt-alt">1436 m</td><td class="wpt-name">Fond de vallee</td><td class="wpt-tip">Point le plus bas de l'etape. Zone forestiere. Longue remontee qui commence ici.</td></tr><tr class="wpt-row"><td class="wpt-dist">14,0 km</td><td class="wpt-icon-cell"><span class="wpt-icon" style="background:#c9773a">&#9650;</span></td><td class="wpt-alt">2355 m</td><td class="wpt-name">Point culminant - Desert de Plate</td><td class="wpt-tip">Sommet du trek ! Paysage lunaire karstique unique. La descente vers Plate est courte.</td></tr><tr class="wpt-row"><td class="wpt-dist">14,7 km</td><td class="wpt-icon-cell"><span class="wpt-icon" style="background:#7eb8c9">&#9978;</span></td><td class="wpt-alt">2084 m</td><td class="wpt-name">Refuge de Plate - Bivouac</td><td class="wpt-tip">Zone plate au pied du refuge. Eau possible au refuge. Nuit a 2084 m : duvet chaud indispensable.</td></tr></tbody>
+        <tbody>
+          <tr class="wpt-row"><td class="wpt-dist">0,0 km</td><td class="wpt-icon-cell"><span class="wpt-icon" style="background:#1a1714">&#9654;</span></td><td class="wpt-alt">2064 m</td><td class="wpt-name">D&eacute;part Lac d&apos;Anterne</td><td class="wpt-tip">Faire le plein avec une eau trait&eacute;e avant de quitter le bivouac.</td></tr>
+          <tr class="wpt-row"><td class="wpt-dist">2,4 km</td><td class="wpt-icon-cell"><span class="wpt-icon" style="background:#287b5a">E</span></td><td class="wpt-alt">1810 m</td><td class="wpt-name">Refuge Alfred Wills</td><td class="wpt-tip">Ravitaillement possible en p&eacute;riode de gardiennage. Confirmer la disponibilit&eacute; sur place.</td></tr>
+          <tr class="wpt-row"><td class="wpt-dist">6,6 km</td><td class="wpt-icon-cell"><span class="wpt-icon" style="background:#6b5b95">V</span></td><td class="wpt-alt">1436 m</td><td class="wpt-name">Cascades du vallon de Sales</td><td class="wpt-tip">Point bas et beau secteur de cascades. Toute eau naturelle doit &ecirc;tre trait&eacute;e.</td></tr>
+          <tr class="wpt-row"><td class="wpt-dist">9,1 km</td><td class="wpt-icon-cell"><span class="wpt-icon" style="background:#287b5a">E</span></td><td class="wpt-alt">1872 m</td><td class="wpt-name">Refuge et source de Sales</td><td class="wpt-tip">Fontaine dans les chalets et source proche. Dernier ravitaillement conseill&eacute; avant Plat&eacute;.</td></tr>
+          <tr class="wpt-row"><td class="wpt-dist">14,0 km</td><td class="wpt-icon-cell"><span class="wpt-icon" style="background:#6b5b95">V</span></td><td class="wpt-alt">2355 m</td><td class="wpt-name">Col de la Portette</td><td class="wpt-tip">Panorama sur le D&eacute;sert de Plat&eacute; et le massif du Mont-Blanc.</td></tr>
+          <tr class="wpt-row"><td class="wpt-dist">14,7 km</td><td class="wpt-icon-cell"><span class="wpt-icon" style="background:#7eb8c9">&#9978;</span></td><td class="wpt-alt">2032 m</td><td class="wpt-name">Refuge de Plat&eacute; - Bivouac</td><td class="wpt-tip">Secteur sec : pas de point d&apos;eau fiable. Arriver avec les r&eacute;serves prises &agrave; Sales.</td></tr>
+        </tbody>
       </table>
     </div>
   </div>
@@ -223,6 +303,13 @@ body{font-family:'DM Sans',sans-serif;font-weight:300;background:var(--snow);col
           <div class="em"><span class="em-val" style="color:#c9773a">&minus;1395 m</span><span class="em-key">D&minus;</span></div>
           <div class="em"><span class="em-val">1240&ndash;2322 m</span><span class="em-key">altitude</span></div>
           <div class="em"><span class="em-val" style="color:var(--moss)">Moyenne</span><span class="em-key">difficult&eacute;</span></div>
+        </div>
+        <div class="etape-schedule">
+          <span class="schedule-item"><strong>08:30</strong>D&eacute;part</span>
+          <span class="schedule-item"><strong>10:15</strong>Cr&ecirc;te des Fiz</span>
+          <span class="schedule-item"><strong>12:00</strong>Fin de la descente raide</span>
+          <span class="schedule-item"><strong>14:30</strong>Arriv&eacute;e vis&eacute;e</span>
+          <span class="schedule-item"><strong>06:41 / 20:30</strong>Lever / coucher</span>
         </div>
       </div>
     </div>
@@ -249,10 +336,48 @@ body{font-family:'DM Sans',sans-serif;font-weight:300;background:var(--snow);col
       <div class="wpt-lbl">Points cl&eacute;s</div>
       <table class="wpt-table">
         <thead><tr><th>Dist.</th><th></th><th>Alt.</th><th>Lieu</th><th>Conseil terrain</th></tr></thead>
-        <tbody><tr class="wpt-row"><td class="wpt-dist">0,0 km</td><td class="wpt-icon-cell"><span class="wpt-icon" style="background:#1a1714">&#9654;</span></td><td class="wpt-alt">2084 m</td><td class="wpt-name">Depart Refuge de Plate</td><td class="wpt-tip">Traversee du plateau karstique. Cairns a suivre, peu de vegetation.</td></tr><tr class="wpt-row"><td class="wpt-dist">0,4 km</td><td class="wpt-icon-cell"><span class="wpt-icon" style="background:#888">&#8594;</span></td><td class="wpt-alt">2026 m</td><td class="wpt-name">Replat Desert de Plate</td><td class="wpt-tip">Traversee du plateau. Terrain sec, aucun point d'eau. Faire le plein avant.</td></tr><tr class="wpt-row"><td class="wpt-dist">2,2 km</td><td class="wpt-icon-cell"><span class="wpt-icon" style="background:#c9773a">&#9650;</span></td><td class="wpt-alt">2299 m</td><td class="wpt-name">Crete des Fiz</td><td class="wpt-tip">Arete rocheuse avec exposition. Bonne meteo imperative. Vue sur Sallanches et la vallee de l'Arve.</td></tr><tr class="wpt-row"><td class="wpt-dist">3,3 km</td><td class="wpt-icon-cell"><span class="wpt-icon" style="background:#c9773a">&#9650;</span></td><td class="wpt-alt">2322 m</td><td class="wpt-name">Point haut J3 - Arete des Fiz</td><td class="wpt-tip">Point culminant du jour. Dernier grand panorama. Terrain expose par vent.</td></tr><tr class="wpt-row"><td class="wpt-dist">5,5 km</td><td class="wpt-icon-cell"><span class="wpt-icon" style="background:#888">&#8600;</span></td><td class="wpt-alt">1535 m</td><td class="wpt-name">Sortie de crete - Chalets</td><td class="wpt-tip">Descente rapide et soutenue (-800m). Genoux sollicites. Batons recommandes.</td></tr><tr class="wpt-row"><td class="wpt-dist">9,1 km</td><td class="wpt-icon-cell"><span class="wpt-icon" style="background:#888">&#8600;</span></td><td class="wpt-alt">1240 m</td><td class="wpt-name">Bas de la descente</td><td class="wpt-tip">Derniere portion avant Plaines-Joux. Terrain forestier, sentier bien trace.</td></tr><tr class="wpt-row"><td class="wpt-dist">10,7 km</td><td class="wpt-icon-cell"><span class="wpt-icon" style="background:#1a1714">&#127937;</span></td><td class="wpt-alt">1354 m</td><td class="wpt-name">Arrivee Plaines-Joux</td><td class="wpt-tip">Boucle bouclee ! Parking du telepherique.</td></tr></tbody>
+        <tbody>
+          <tr class="wpt-row"><td class="wpt-dist">0,0 km</td><td class="wpt-icon-cell"><span class="wpt-icon" style="background:#1a1714">&#9654;</span></td><td class="wpt-alt">2032 m</td><td class="wpt-name">D&eacute;part Refuge de Plat&eacute;</td><td class="wpt-tip">Secteur sans eau fiable. Partir avec les r&eacute;serves constitu&eacute;es la veille &agrave; Sales.</td></tr>
+          <tr class="wpt-row"><td class="wpt-dist">0,4 km</td><td class="wpt-icon-cell"><span class="wpt-icon" style="background:#6b5b95">V</span></td><td class="wpt-alt">2026 m</td><td class="wpt-name">Balcon de Plat&eacute;</td><td class="wpt-tip">Tr&egrave;s belle lumi&egrave;re matinale et vue sur le massif du Mont-Blanc.</td></tr>
+          <tr class="wpt-row"><td class="wpt-dist">2,2 km</td><td class="wpt-icon-cell"><span class="wpt-icon" style="background:#c9773a">&#9650;</span></td><td class="wpt-alt">2299 m</td><td class="wpt-name">Cr&ecirc;te des Fiz</td><td class="wpt-tip">Ar&ecirc;te rocheuse expos&eacute;e. Bonne m&eacute;t&eacute;o imp&eacute;rative.</td></tr>
+          <tr class="wpt-row"><td class="wpt-dist">3,3 km</td><td class="wpt-icon-cell"><span class="wpt-icon" style="background:#6b5b95">V</span></td><td class="wpt-alt">2322 m</td><td class="wpt-name">Point haut J3</td><td class="wpt-tip">Panorama sur le Mont-Blanc, la vall&eacute;e de l&apos;Arve et la cha&icirc;ne des Fiz.</td></tr>
+          <tr class="wpt-row"><td class="wpt-dist">5,5 km</td><td class="wpt-icon-cell"><span class="wpt-icon" style="background:#888">&#8600;</span></td><td class="wpt-alt">1535 m</td><td class="wpt-name">Sortie de cr&ecirc;te</td><td class="wpt-tip">Descente rapide et soutenue. B&acirc;tons recommand&eacute;s.</td></tr>
+          <tr class="wpt-row"><td class="wpt-dist">10,7 km</td><td class="wpt-icon-cell"><span class="wpt-icon" style="background:#1a1714">&#127937;</span></td><td class="wpt-alt">1354 m</td><td class="wpt-name">Arriv&eacute;e Plaine-Joux</td><td class="wpt-tip">Retour au parking de la station.</td></tr>
+        </tbody>
       </table>
     </div>
   </div>
+</section>
+
+<section class="sec-wrap" style="background:var(--mist)">
+  <p class="sec-lbl">03 &middot; Avant de partir</p>
+  <h2 class="sec-title">M&eacute;t&eacute;o et consultation hors ligne</h2>
+  <div class="infos-grid">
+    <div class="info-card ic-meteo">
+      <div class="ic-title">M&eacute;t&eacute;o officielle</div>
+      <div class="ic-text">Consulter les pr&eacute;visions de Passy / Plaine-Joux et la vigilance Haute-Savoie le soir pr&eacute;c&eacute;dent, puis juste avant le d&eacute;part.</div>
+      <div class="action-row">
+        <a class="action-link" href="https://meteofrance.com/previsions-meteo-france/passy/74190" target="_blank" rel="noopener">M&eacute;t&eacute;o Passy</a>
+        <a class="action-link" href="https://vigilance.meteofrance.fr/fr/haute-savoie" target="_blank" rel="noopener">Vigilance 74</a>
+      </div>
+    </div>
+    <div class="info-card ic-map">
+      <div class="ic-title">Sur le t&eacute;l&eacute;phone</div>
+      <div class="ic-text">Apr&egrave;s une premi&egrave;re ouverture en ligne, le contenu principal reste disponible sans r&eacute;seau. Les fonds cartographiques en ligne ne sont pas garantis hors connexion.</div>
+      <div class="action-row">
+        <button class="install-btn" id="install-app" type="button">Installer le roadbook</button>
+      </div>
+    </div>
+    <div class="info-card ic-equip">
+      <div class="ic-title">Strat&eacute;gie eau</div>
+      <div class="ic-text">Points les plus utiles : Mo&euml;de-Anterne le J1, Alfred Wills puis la fontaine/source de Sales le J2. Le lac et les torrents exigent un traitement. Plat&eacute; est un secteur sec : ne comptez pas sur le refuge pour remplir les gourdes.</div>
+    </div>
+    <div class="info-card ic-alert">
+      <div class="ic-title">Panoramas &agrave; ne pas manquer</div>
+      <div class="ic-text">Alpages d&apos;Ay&egrave;res, col d&apos;Anterne au-dessus du lac, cascades du vallon de Sales, col de la Portette et lever du jour depuis Plat&eacute; face au Mont-Blanc.</div>
+    </div>
+  </div>
+  <div class="offline-note">Les heures solaires sont calcul&eacute;es en heure locale pour le massif. Le relief peut masquer le soleil plus t&ocirc;t le soir ou retarder son apparition le matin.</div>
 </section>
 
 
@@ -265,6 +390,8 @@ body{font-family:'DM Sans',sans-serif;font-weight:300;background:var(--snow);col
     <a class="footer-link" href="https://www.visorando.com/randonnee-98782739/" target="_blank">&Eacute;tape 3</a>
   </div>
 </footer>
+<div class="network-state" id="network-state">Mode hors connexion</div>
+<div class="gps-state" id="gps-state"></div>
 
 <script>
 (function() {
@@ -286,11 +413,188 @@ body{font-family:'DM Sans',sans-serif;font-weight:300;background:var(--snow);col
       }
     );
   }
+  function orthoIgn(){
+    return L.tileLayer(
+      'https://data.geopf.fr/wmts?' +
+      'REQUEST=GetTile&SERVICE=WMTS&VERSION=1.0.0' +
+      '&STYLE=normal&TILEMATRIXSET=PM&FORMAT=image/jpeg' +
+      '&LAYER=ORTHOIMAGERY.ORTHOPHOTOS' +
+      '&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}',
+      {minZoom:0,maxZoom:19,tileSize:256,attribution:'Images &copy; IGN / G&eacute;oplateforme'}
+    );
+  }
+  function openHiking(){
+    return L.tileLayer('https://tile.openmaps.fr/openhikingmap/{z}/{x}/{y}.png',{
+      minZoom:0,
+      maxZoom:18,
+      attribution:'<a href="https://wiki.openstreetmap.org/wiki/OpenHikingMap">&copy; OpenHikingMap</a> <a href="https://openmaps.fr/donate">Donation</a> <a href="https://www.openstreetmap.org/copyright">&copy; OpenStreetMap</a>'
+    });
+  }
+  function addBaseLayers(map){
+    var plan=planIgn();
+    var ortho=orthoIgn();
+    var hiking=openHiking();
+    plan.addTo(map);
+    L.control.layers({
+      'Plan IGN':plan,
+      'Photo a&eacute;rienne IGN':ortho,
+      'Fond randonn&eacute;e':hiking
+    },null,{position:'topright',collapsed:true}).addTo(map);
+  }
+  function addFitControl(map,bounds,padding){
+    var FitControl=L.Control.extend({
+      options:{position:'topleft'},
+      onAdd:function(){
+        var container=L.DomUtil.create('div','leaflet-bar leaflet-control leaflet-control-fit');
+        var button=L.DomUtil.create('a','',container);
+        button.href='#';
+        button.innerHTML='&#x26F6;';
+        button.title='Afficher toute la trace';
+        button.setAttribute('aria-label','Afficher toute la trace');
+        L.DomEvent.disableClickPropagation(container);
+        L.DomEvent.on(button,'click',function(event){
+          L.DomEvent.preventDefault(event);
+          map.fitBounds(bounds,{padding:padding});
+        });
+        return container;
+      }
+    });
+    new FitControl().addTo(map);
+  }
+  var gpsState={
+    watchId:null,
+    maps:[],
+    buttons:[],
+    focusMap:null,
+    hasFocused:false
+  };
+  function gpsMessage(message,keep){
+    var state=document.getElementById('gps-state');
+    state.innerHTML=message;
+    state.style.display='block';
+    clearTimeout(gpsState.messageTimer);
+    if(!keep)gpsState.messageTimer=setTimeout(function(){state.style.display='none';},3500);
+  }
+  function stopGps(){
+    if(gpsState.watchId!==null)navigator.geolocation.clearWatch(gpsState.watchId);
+    gpsState.watchId=null;
+    gpsState.buttons.forEach(function(button){button.classList.remove('is-active');});
+    gpsMessage('Suivi GPS arr&ecirc;t&eacute;');
+  }
+  function updateGps(position){
+    var latlng=[position.coords.latitude,position.coords.longitude];
+    gpsState.maps.forEach(function(item){
+      if(!item.marker){
+        item.accuracy=L.circle(latlng,{
+          radius:position.coords.accuracy,
+          color:'#2b78c5',
+          weight:1,
+          fillColor:'#2b78c5',
+          fillOpacity:.12,
+          interactive:false
+        }).addTo(item.map);
+        item.marker=L.circleMarker(latlng,{
+          radius:7,
+          color:'#fff',
+          weight:3,
+          fillColor:'#2b78c5',
+          fillOpacity:1
+        }).addTo(item.map).bindPopup('Votre position');
+      }else{
+        item.marker.setLatLng(latlng);
+        item.accuracy.setLatLng(latlng).setRadius(position.coords.accuracy);
+      }
+    });
+    if(gpsState.focusMap&&!gpsState.hasFocused){
+      gpsState.focusMap.setView(latlng,Math.max(gpsState.focusMap.getZoom(),15));
+      gpsState.hasFocused=true;
+    }
+    gpsMessage('Position mise &agrave; jour &middot; pr&eacute;cision '+Math.round(position.coords.accuracy)+' m');
+  }
+  function startGps(map){
+    if(!navigator.geolocation){
+      gpsMessage('G&eacute;olocalisation non disponible');
+      return;
+    }
+    gpsState.focusMap=map;
+    gpsState.hasFocused=false;
+    gpsState.buttons.forEach(function(button){button.classList.add('is-active');});
+    gpsMessage('Recherche de votre position...',true);
+    gpsState.watchId=navigator.geolocation.watchPosition(updateGps,function(error){
+      gpsState.buttons.forEach(function(button){button.classList.remove('is-active');});
+      gpsState.watchId=null;
+      var message=error.code===1?'Autorisation GPS refus&eacute;e':'Position GPS indisponible';
+      gpsMessage(message);
+    },{enableHighAccuracy:true,maximumAge:5000,timeout:15000});
+  }
+  function addLocateControl(map){
+    gpsState.maps.push({map:map,marker:null,accuracy:null});
+    var LocateControl=L.Control.extend({
+      options:{position:'topleft'},
+      onAdd:function(){
+        var container=L.DomUtil.create('div','leaflet-bar leaflet-control leaflet-control-locate');
+        var button=L.DomUtil.create('a','',container);
+        button.href='#';
+        button.innerHTML='&#x2316;';
+        button.title='Afficher ma position';
+        button.setAttribute('aria-label','Afficher ma position');
+        gpsState.buttons.push(button);
+        L.DomEvent.disableClickPropagation(container);
+        L.DomEvent.on(button,'click',function(event){
+          L.DomEvent.preventDefault(event);
+          if(gpsState.watchId===null)startGps(map);else stopGps();
+        });
+        return container;
+      }
+    });
+    new LocateControl().addTo(map);
+  }
   function mkIcon(col,sym){
     return L.divIcon({className:'',html:'<div style="background:'+col+';color:white;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:11px;border:2px solid white;box-shadow:0 2px 6px rgba(0,0,0,.3)">'+sym+'</div>',iconSize:[26,26],iconAnchor:[13,13],popupAnchor:[0,-15]});
   }
-  var mapG=L.map('map-global',{scrollWheelZoom:false});
-  planIgn().addTo(mapG);
+  function pointAtDistance(track,targetKm){
+    var travelled=0;
+    for(var i=1;i<track.length;i++){
+      var a=L.latLng(track[i-1]),b=L.latLng(track[i]);
+      var segment=a.distanceTo(b)/1000;
+      if(travelled+segment>=targetKm){
+        var ratio=(targetKm-travelled)/segment;
+        return [a.lat+(b.lat-a.lat)*ratio,a.lng+(b.lng-a.lng)*ratio];
+      }
+      travelled+=segment;
+    }
+    return track[track.length-1];
+  }
+  function addPoi(map,track,poi){
+    L.marker(pointAtDistance(track,poi.km),{icon:mkIcon(poi.color,poi.symbol)})
+      .addTo(map)
+      .bindPopup('<strong>'+poi.name+'</strong><br>'+poi.detail);
+  }
+  var pois1=[
+    {km:0,name:'Parking de Plaine-Joux',detail:'D&eacute;part et retour de la boucle.',color:'#1a1714',symbol:'P'},
+    {km:4.4,name:'Alpages d&apos;Ay&egrave;res',detail:'Ouverture sur le massif du Mont-Blanc.',color:'#6b5b95',symbol:'V'},
+    {km:7,name:'Refuge de Mo&euml;de-Anterne',detail:'Eau potable annonc&eacute;e en p&eacute;riode de gardiennage. Petit d&eacute;tour possible.',color:'#287b5a',symbol:'E'},
+    {km:8.5,name:'Col d&apos;Anterne',detail:'Panorama sur le lac, les Fiz et le massif du Mont-Blanc.',color:'#6b5b95',symbol:'V'},
+    {km:10,name:'Lac d&apos;Anterne',detail:'Bivouac. Eau naturelle &agrave; traiter ou filtrer.',color:'#526b8a',symbol:'R'}
+  ];
+  var pois2=[
+    {km:0,name:'Lac d&apos;Anterne',detail:'Eau naturelle &agrave; traiter ou filtrer.',color:'#287b5a',symbol:'E'},
+    {km:2.37,name:'Refuge Alfred Wills',detail:'Ravitaillement possible en p&eacute;riode de gardiennage. Demander confirmation au refuge.',color:'#287b5a',symbol:'E'},
+    {km:6.6,name:'Cascades du vallon de Sales',detail:'Beau secteur de cascades. Eau naturelle uniquement, &agrave; traiter.',color:'#6b5b95',symbol:'V'},
+    {km:9.07,name:'Refuge et source de Sales',detail:'Fontaine dans les chalets et source proche. V&eacute;rifier sur place et traiter en cas de doute.',color:'#287b5a',symbol:'E'},
+    {km:14,name:'Col de la Portette / D&eacute;sert de Plat&eacute;',detail:'Panorama min&eacute;ral et vues sur le Mont-Blanc.',color:'#6b5b95',symbol:'V'},
+    {km:14.7,name:'Refuge de Plat&eacute;',detail:'Refuge et bivouac. Pas de point d&apos;eau fiable : arriver avec ses r&eacute;serves.',color:'#526b8a',symbol:'R'}
+  ];
+  var pois3=[
+    {km:0,name:'Refuge de Plat&eacute;',detail:'Pas de point d&apos;eau fiable. Pr&eacute;voir les r&eacute;serves depuis Sales.',color:'#526b8a',symbol:'R'},
+    {km:.4,name:'Balcon de Plat&eacute;',detail:'Vue remarquable sur le massif du Mont-Blanc au lever du jour.',color:'#6b5b95',symbol:'V'},
+    {km:2.2,name:'Cr&ecirc;te des Fiz',detail:'Passage expos&eacute;. Bonne m&eacute;t&eacute;o imp&eacute;rative.',color:'#c9773a',symbol:'!'},
+    {km:3.3,name:'Point haut J3',detail:'Dernier grand panorama sur le Mont-Blanc, la vall&eacute;e de l&apos;Arve et les Fiz.',color:'#6b5b95',symbol:'V'},
+    {km:10.7,name:'Parking de Plaine-Joux',detail:'Arriv&eacute;e de la boucle.',color:'#1a1714',symbol:'P'}
+  ];
+  var mapG=L.map('map-global',{scrollWheelZoom:true});
+  addBaseLayers(mapG);
+  addLocateControl(mapG);
   L.polyline(j1,{color:'#7eb8c9',weight:4,opacity:.9}).addTo(mapG);
   L.polyline(j2,{color:'#c9773a',weight:4,opacity:.9}).addTo(mapG);
   L.polyline(j3,{color:'#6b8c5a',weight:4,opacity:.9}).addTo(mapG);
@@ -298,25 +602,429 @@ body{font-family:'DM Sans',sans-serif;font-weight:300;background:var(--snow);col
   L.marker([45.991233, 6.795616],{icon:mkIcon('#7eb8c9','*')}).addTo(mapG).bindPopup('Bivouac J1 - Lac Anterne 2064m');
   L.marker([45.966158, 6.719612],{icon:mkIcon('#c9773a','*')}).addTo(mapG).bindPopup('Bivouac J2 - Refuge Plate 2084m');
   L.marker([45.95005, 6.740675],{icon:mkIcon('#1a1714','X')}).addTo(mapG).bindPopup('Arrivee - Plaines-Joux 1354m');
-  mapG.fitBounds(L.latLngBounds(j1.concat(j2).concat(j3)),{padding:[30,30]});
-  var m1=L.map('map-j1',{scrollWheelZoom:false,zoomControl:false});
-  planIgn().addTo(m1);
+  pois1.concat(pois2,pois3).forEach(function(poi){
+    var track=pois1.indexOf(poi)>=0?j1:(pois2.indexOf(poi)>=0?j2:j3);
+    addPoi(mapG,track,poi);
+  });
+  var profileMapCursor=L.circleMarker(j1[0],{
+    radius:8,
+    color:'#1a1714',
+    weight:3,
+    fillColor:'#faf8f4',
+    fillOpacity:0,
+    opacity:0,
+    interactive:false
+  }).addTo(mapG);
+  window.roadbookMapState={
+    map:mapG,
+    tracks:[j1,j2,j3],
+    pointAtDistance:pointAtDistance,
+    cursor:profileMapCursor
+  };
+  var boundsGlobal=L.latLngBounds(j1.concat(j2).concat(j3));
+  mapG.fitBounds(boundsGlobal,{padding:[30,30]});
+  addFitControl(mapG,boundsGlobal,[30,30]);
+  var m1=L.map('map-j1',{scrollWheelZoom:true,zoomControl:false});
+  addBaseLayers(m1);
+  addLocateControl(m1);
   var l1=L.polyline(j1,{color:'#7eb8c9',weight:3,opacity:.9}).addTo(m1);
   L.marker([45.95036, 6.740284],{icon:mkIcon('#1a1714','&gt;')}).addTo(m1);
   L.marker([45.991233, 6.795616],{icon:mkIcon('#7eb8c9','*')}).addTo(m1);
+  pois1.forEach(function(poi){addPoi(m1,j1,poi);});
+  var cursor1=L.circleMarker(j1[0],{radius:7,color:'#7eb8c9',weight:3,fillColor:'#faf8f4',fillOpacity:0,opacity:0,interactive:false}).addTo(m1);
   m1.fitBounds(l1.getBounds(),{padding:[18,18]});
-  var m2=L.map('map-j2',{scrollWheelZoom:false,zoomControl:false});
-  planIgn().addTo(m2);
+  addFitControl(m1,l1.getBounds(),[18,18]);
+  var m2=L.map('map-j2',{scrollWheelZoom:true,zoomControl:false});
+  addBaseLayers(m2);
+  addLocateControl(m2);
   var l2=L.polyline(j2,{color:'#c9773a',weight:3,opacity:.9}).addTo(m2);
   L.marker([45.991233, 6.795616],{icon:mkIcon('#7eb8c9','&gt;')}).addTo(m2);
   L.marker([45.966158, 6.719612],{icon:mkIcon('#c9773a','*')}).addTo(m2);
+  pois2.forEach(function(poi){addPoi(m2,j2,poi);});
+  var cursor2=L.circleMarker(j2[0],{radius:7,color:'#c9773a',weight:3,fillColor:'#faf8f4',fillOpacity:0,opacity:0,interactive:false}).addTo(m2);
   m2.fitBounds(l2.getBounds(),{padding:[18,18]});
-  var m3=L.map('map-j3',{scrollWheelZoom:false,zoomControl:false});
-  planIgn().addTo(m3);
+  addFitControl(m2,l2.getBounds(),[18,18]);
+  var m3=L.map('map-j3',{scrollWheelZoom:true,zoomControl:false});
+  addBaseLayers(m3);
+  addLocateControl(m3);
   var l3=L.polyline(j3,{color:'#6b8c5a',weight:3,opacity:.9}).addTo(m3);
   L.marker([45.966158, 6.719612],{icon:mkIcon('#c9773a','&gt;')}).addTo(m3);
   L.marker([45.95005, 6.740675],{icon:mkIcon('#1a1714','X')}).addTo(m3);
+  pois3.forEach(function(poi){addPoi(m3,j3,poi);});
+  var cursor3=L.circleMarker(j3[0],{radius:7,color:'#6b8c5a',weight:3,fillColor:'#faf8f4',fillOpacity:0,opacity:0,interactive:false}).addTo(m3);
   m3.fitBounds(l3.getBounds(),{padding:[18,18]});
+  addFitControl(m3,l3.getBounds(),[18,18]);
+  window.roadbookDailyMaps=[
+    {map:m1,track:j1,cursor:cursor1},
+    {map:m2,track:j2,cursor:cursor2},
+    {map:m3,track:j3,cursor:cursor3}
+  ];
+})();
+</script>
+<script>
+(function(){
+  var installPrompt;
+  var installButton=document.getElementById('install-app');
+  var networkState=document.getElementById('network-state');
+  function updateNetworkState(){
+    networkState.style.display=navigator.onLine?'none':'block';
+  }
+  window.addEventListener('online',updateNetworkState);
+  window.addEventListener('offline',updateNetworkState);
+  updateNetworkState();
+  window.addEventListener('beforeinstallprompt',function(event){
+    event.preventDefault();
+    installPrompt=event;
+    installButton.style.display='inline-flex';
+  });
+  installButton.addEventListener('click',function(){
+    if(!installPrompt)return;
+    installPrompt.prompt();
+    installPrompt.userChoice.then(function(){installPrompt=null;installButton.style.display='none';});
+  });
+  if('serviceWorker' in navigator&&location.protocol.indexOf('http')===0){
+    navigator.serviceWorker.register('./service-worker.js');
+  }
+})();
+</script>
+<script>
+(function(){
+  var configs=[
+    {mapId:'map-j1',distance:10.01,min:1268,max:2255,color:'#7eb8c9'},
+    {mapId:'map-j2',distance:14.94,min:1436,max:2353,color:'#c9773a'},
+    {mapId:'map-j3',distance:10.69,min:1240,max:2322,color:'#6b8c5a'}
+  ];
+  var ns='http://www.w3.org/2000/svg';
+  function svgEl(name,attrs,parent,text){
+    var node=document.createElementNS(ns,name);
+    Object.keys(attrs||{}).forEach(function(key){node.setAttribute(key,attrs[key]);});
+    if(text)node.textContent=text;
+    parent.appendChild(node);
+    return node;
+  }
+  configs.forEach(function(config,index){
+    var mapElement=document.getElementById(config.mapId);
+    var wrap=mapElement.closest('.etape-body').querySelector('.profile-wrap');
+    var svg=wrap.querySelector('svg');
+    var polyline=svg.querySelector('polyline');
+    var rawPoints=polyline.getAttribute('points').trim().split(/\s+/).map(function(value){
+      var pair=value.split(',').map(Number);
+      var ratio=(pair[0]-35)/(865-35);
+      return {
+        x:pair[0],
+        y:pair[1],
+        km:Math.max(0,Math.min(config.distance,ratio*config.distance)),
+        altitude:config.max-((pair[1]-8)/(102-8))*(config.max-config.min)
+      };
+    });
+    var toolbar=document.createElement('div');
+    toolbar.className='daily-profile-toolbar';
+    toolbar.innerHTML=
+      '<button class="daily-profile-tool" type="button" data-action="in" title="Zoom avant" aria-label="Zoom avant">+</button>'+
+      '<button class="daily-profile-tool" type="button" data-action="out" title="Zoom arri&egrave;re" aria-label="Zoom arri&egrave;re">&minus;</button>'+
+      '<button class="daily-profile-tool" type="button" data-action="reset" title="Afficher le profil complet" aria-label="Afficher le profil complet">&#x26F6;</button>';
+    wrap.insertBefore(toolbar,svg);
+    svg.setAttribute('preserveAspectRatio','none');
+    var cursorLine=svgEl('line',{x1:35,y1:8,x2:35,y2:108,stroke:'#1a1714','stroke-width':1.2,'stroke-dasharray':'3 3',visibility:'hidden','pointer-events':'none'},svg);
+    var cursorPoint=svgEl('circle',{cx:35,cy:102,r:4.5,fill:config.color,stroke:'#fff','stroke-width':2,visibility:'hidden','pointer-events':'none'},svg);
+    var tooltip=svgEl('g',{visibility:'hidden','pointer-events':'none'},svg);
+    svgEl('rect',{x:0,y:0,width:116,height:31,rx:3,fill:'#1a1714'},tooltip);
+    var tooltipMain=svgEl('text',{x:8,y:13,'font-family':'DM Mono, monospace','font-size':8.5,fill:'#faf8f4'},tooltip);
+    var tooltipSub=svgEl('text',{x:8,y:25,'font-family':'DM Mono, monospace','font-size':7.5,fill:config.color},tooltip);
+    var hitArea=svgEl('rect',{x:35,y:8,width:830,height:100,fill:'transparent'},svg);
+    var view={x:0,width:900};
+    var center=450;
+    var dragging=false;
+    var dragStartClientX=0;
+    var dragStartX=0;
+    function position(event){
+      var point=svg.createSVGPoint();
+      point.x=event.clientX;
+      point.y=event.clientY;
+      return point.matrixTransform(svg.getScreenCTM().inverse());
+    }
+    function nearestAt(x){
+      return rawPoints.reduce(function(best,point){
+        return Math.abs(point.x-x)<Math.abs(best.x-x)?point:best;
+      },rawPoints[0]);
+    }
+    function show(event){
+      var pos=position(event);
+      center=Math.max(35,Math.min(865,pos.x));
+      var nearest=nearestAt(center);
+      cursorLine.setAttribute('x1',nearest.x);
+      cursorLine.setAttribute('x2',nearest.x);
+      cursorPoint.setAttribute('cx',nearest.x);
+      cursorPoint.setAttribute('cy',nearest.y);
+      cursorLine.setAttribute('visibility','visible');
+      cursorPoint.setAttribute('visibility','visible');
+      tooltipMain.textContent=nearest.km.toFixed(1).replace('.',',')+' km';
+      tooltipSub.textContent=Math.round(nearest.altitude)+' m';
+      var tipX=nearest.x+7;
+      if(tipX+116>view.x+view.width)tipX=nearest.x-123;
+      var tipY=Math.max(8,Math.min(76,nearest.y-36));
+      tooltip.setAttribute('transform','translate('+tipX+' '+tipY+')');
+      tooltip.setAttribute('visibility','visible');
+      var mapState=window.roadbookDailyMaps&&window.roadbookDailyMaps[index];
+      if(mapState&&window.roadbookMapState){
+        var location=window.roadbookMapState.pointAtDistance(mapState.track,nearest.km);
+        mapState.cursor.setLatLng(location);
+        mapState.cursor.setStyle({opacity:1,fillOpacity:1});
+        mapState.cursor.bringToFront();
+      }
+    }
+    function hide(){
+      cursorLine.setAttribute('visibility','hidden');
+      cursorPoint.setAttribute('visibility','hidden');
+      tooltip.setAttribute('visibility','hidden');
+      var mapState=window.roadbookDailyMaps&&window.roadbookDailyMaps[index];
+      if(mapState)mapState.cursor.setStyle({opacity:0,fillOpacity:0});
+    }
+    function setZoom(nextWidth,focus){
+      var width=Math.max(230,Math.min(900,nextWidth));
+      var ratio=(focus-view.x)/view.width;
+      var x=focus-ratio*width;
+      x=Math.max(0,Math.min(900-width,x));
+      view={x:x,width:width};
+      svg.setAttribute('viewBox',x+' 0 '+width+' 128');
+    }
+    function zoom(factor){setZoom(view.width*factor,center);}
+    hitArea.addEventListener('pointermove',function(event){
+      if(dragging){
+        var rect=svg.getBoundingClientRect();
+        var delta=(event.clientX-dragStartClientX)*(view.width/rect.width);
+        view.x=Math.max(0,Math.min(900-view.width,dragStartX-delta));
+        svg.setAttribute('viewBox',view.x+' 0 '+view.width+' 128');
+      }else{
+        show(event);
+      }
+    });
+    hitArea.addEventListener('pointerdown',function(event){
+      hitArea.setPointerCapture(event.pointerId);
+      if(view.width<900){
+        dragging=true;
+        dragStartClientX=event.clientX;
+        dragStartX=view.x;
+        svg.classList.add('is-dragging');
+        event.preventDefault();
+      }else{
+        show(event);
+      }
+    });
+    hitArea.addEventListener('pointerup',function(event){
+      dragging=false;
+      svg.classList.remove('is-dragging');
+      if(hitArea.hasPointerCapture(event.pointerId))hitArea.releasePointerCapture(event.pointerId);
+      show(event);
+    });
+    hitArea.addEventListener('pointercancel',function(){
+      dragging=false;
+      svg.classList.remove('is-dragging');
+    });
+    hitArea.addEventListener('pointerleave',function(event){
+      if(event.buttons||dragging)return;
+      hide();
+    });
+    svg.addEventListener('wheel',function(event){
+      event.preventDefault();
+      center=position(event).x;
+      zoom(event.deltaY<0?.82:1.22);
+    },{passive:false});
+    toolbar.addEventListener('click',function(event){
+      var action=event.target.getAttribute('data-action');
+      if(action==='in')zoom(.75);
+      if(action==='out')zoom(1.3);
+      if(action==='reset'){
+        view={x:0,width:900};
+        center=450;
+        svg.setAttribute('viewBox','0 0 900 128');
+      }
+    });
+  });
+})();
+</script>
+<script>
+(function(){
+  var svg=document.getElementById('profile-global');
+  var profiles=[
+    {svg:document.querySelector('#map-j1').closest('.etape-body').querySelector('svg'),distance:10.01,min:1268,max:2255,color:'#7eb8c9'},
+    {svg:document.querySelector('#map-j2').closest('.etape-body').querySelector('svg'),distance:14.94,min:1436,max:2353,color:'#c9773a'},
+    {svg:document.querySelector('#map-j3').closest('.etape-body').querySelector('svg'),distance:10.69,min:1240,max:2322,color:'#6b8c5a'}
+  ];
+  var total=profiles.reduce(function(sum,p){return sum+p.distance;},0);
+  var left=52,right=975,top=12,bottom=145,minAlt=1200,maxAlt=2400;
+  var chartPoints=[];
+  var profileView={x:0,width:1000};
+  var profileCenter=500;
+  var isDragging=false;
+  var dragStartClientX=0;
+  var dragStartViewX=0;
+  var ns='http://www.w3.org/2000/svg';
+  function el(name,attrs,text){
+    var node=document.createElementNS(ns,name);
+    Object.keys(attrs||{}).forEach(function(key){node.setAttribute(key,attrs[key]);});
+    if(text)node.textContent=text;
+    svg.appendChild(node);
+    return node;
+  }
+  function xFor(km){return left+(km/total)*(right-left);}
+  function yFor(alt){return bottom-((alt-minAlt)/(maxAlt-minAlt))*(bottom-top);}
+  [1200,1600,2000,2400].forEach(function(alt){
+    var y=yFor(alt);
+    el('line',{x1:left,y1:y,x2:right,y2:y,stroke:'#e8e0d4','stroke-width':1});
+    el('text',{x:left-8,y:y+3,'text-anchor':'end','font-family':'DM Mono, monospace','font-size':10,fill:'#8c837c'},alt+' m');
+  });
+  var offset=0;
+  profiles.forEach(function(profile,index){
+    var source=profile.svg.querySelector('polyline');
+    var raw=source.getAttribute('points').trim().split(/\s+/).map(function(point){
+      var values=point.split(',').map(Number);
+      var localRatio=(values[0]-35)/(865-35);
+      var altitude=profile.max-((values[1]-8)/(102-8))*(profile.max-profile.min);
+      var km=offset+localRatio*profile.distance;
+      chartPoints.push({
+        x:xFor(km),
+        y:yFor(altitude),
+        km:km,
+        localKm:localRatio*profile.distance,
+        altitude:altitude,
+        day:index+1
+      });
+      return [xFor(km),yFor(altitude)];
+    });
+    var points=raw.map(function(point){return point[0].toFixed(1)+','+point[1].toFixed(1);}).join(' ');
+    var area=points+' '+xFor(offset+profile.distance).toFixed(1)+','+bottom+' '+xFor(offset).toFixed(1)+','+bottom;
+    el('polygon',{points:area,fill:profile.color,'fill-opacity':.13});
+    el('polyline',{points:points,fill:'none',stroke:profile.color,'stroke-width':3,'stroke-linejoin':'round','stroke-linecap':'round'});
+    var middle=xFor(offset+profile.distance/2);
+    el('text',{x:middle,y:174,'text-anchor':'middle','font-family':'DM Mono, monospace','font-size':10,fill:profile.color},'J'+(index+1)+' · '+profile.distance.toFixed(1)+' km');
+    offset+=profile.distance;
+    if(index<profiles.length-1){
+      var splitX=xFor(offset);
+      el('line',{x1:splitX,y1:top,x2:splitX,y2:bottom,stroke:'#1a1714','stroke-width':1,'stroke-dasharray':'4 4','stroke-opacity':.5});
+      el('circle',{cx:splitX,cy:bottom,r:4,fill:'#1a1714'});
+      el('text',{x:splitX,y:bottom+15,'text-anchor':'middle','font-family':'DM Mono, monospace','font-size':9,fill:'#1a1714'},index===0?'Bivouac Anterne':'Bivouac Platé');
+    }
+  });
+  el('line',{x1:left,y1:bottom,x2:right,y2:bottom,stroke:'#bdb5ad','stroke-width':1});
+  [0,10,20,30,total].forEach(function(km){
+    el('text',{x:xFor(km),y:158,'text-anchor':'middle','font-family':'DM Mono, monospace','font-size':9,fill:'#8c837c'},km===total?total.toFixed(1)+' km':km+' km');
+  });
+  var cursorLine=el('line',{x1:left,y1:top,x2:left,y2:bottom,stroke:'#1a1714','stroke-width':1.5,'stroke-dasharray':'3 3',visibility:'hidden','pointer-events':'none'});
+  var cursorPoint=el('circle',{cx:left,cy:bottom,r:5,fill:'#1a1714',stroke:'#fff','stroke-width':2,visibility:'hidden','pointer-events':'none'});
+  var tooltip=el('g',{visibility:'hidden','pointer-events':'none'});
+  var tooltipBox=el('rect',{x:0,y:0,width:132,height:38,rx:3,fill:'#1a1714'});
+  var tooltipMain=el('text',{x:10,y:15,'font-family':'DM Mono, monospace','font-size':10,fill:'#faf8f4'});
+  var tooltipSub=el('text',{x:10,y:29,'font-family':'DM Mono, monospace','font-size':9,fill:'#b8dce8'});
+  tooltip.appendChild(tooltipBox);
+  tooltip.appendChild(tooltipMain);
+  tooltip.appendChild(tooltipSub);
+  var hitArea=el('rect',{x:left,y:top,width:right-left,height:bottom-top,fill:'transparent'});
+  function svgPosition(event){
+    var point=svg.createSVGPoint();
+    point.x=event.clientX;
+    point.y=event.clientY;
+    return point.matrixTransform(svg.getScreenCTM().inverse());
+  }
+  function showCursor(event){
+    var position=svgPosition(event);
+    var targetX=Math.max(left,Math.min(right,position.x));
+    profileCenter=targetX;
+    var nearest=chartPoints.reduce(function(best,point){
+      return Math.abs(point.x-targetX)<Math.abs(best.x-targetX)?point:best;
+    },chartPoints[0]);
+    cursorLine.setAttribute('x1',nearest.x);
+    cursorLine.setAttribute('x2',nearest.x);
+    cursorPoint.setAttribute('cx',nearest.x);
+    cursorPoint.setAttribute('cy',nearest.y);
+    cursorLine.setAttribute('visibility','visible');
+    cursorPoint.setAttribute('visibility','visible');
+    tooltipMain.textContent=nearest.km.toFixed(1).replace('.',',')+' km · '+Math.round(nearest.altitude)+' m';
+    tooltipSub.textContent='Jour '+nearest.day;
+    var tooltipX=nearest.x+10;
+    if(tooltipX+132>right)tooltipX=nearest.x-142;
+    var tooltipY=Math.max(top,Math.min(bottom-38,nearest.y-45));
+    tooltip.setAttribute('transform','translate('+tooltipX+' '+tooltipY+')');
+    tooltip.setAttribute('visibility','visible');
+    if(window.roadbookMapState){
+      var mapState=window.roadbookMapState;
+      var location=mapState.pointAtDistance(mapState.tracks[nearest.day-1],nearest.localKm);
+      mapState.cursor.setLatLng(location);
+      mapState.cursor.setStyle({
+        color:profiles[nearest.day-1].color,
+        fillColor:'#faf8f4',
+        opacity:1,
+        fillOpacity:1
+      });
+      mapState.cursor.bringToFront();
+    }
+  }
+  hitArea.addEventListener('pointermove',function(event){
+    if(isDragging){
+      var rect=svg.getBoundingClientRect();
+      var delta=(event.clientX-dragStartClientX)*(profileView.width/rect.width);
+      var nextX=Math.max(0,Math.min(1000-profileView.width,dragStartViewX-delta));
+      profileView.x=nextX;
+      svg.setAttribute('viewBox',nextX+' 0 '+profileView.width+' 190');
+      return;
+    }
+    showCursor(event);
+  });
+  hitArea.addEventListener('pointerdown',function(event){
+    hitArea.setPointerCapture(event.pointerId);
+    if(profileView.width<1000){
+      isDragging=true;
+      dragStartClientX=event.clientX;
+      dragStartViewX=profileView.x;
+      svg.classList.add('is-dragging');
+      event.preventDefault();
+    }else{
+      showCursor(event);
+    }
+  });
+  hitArea.addEventListener('pointerup',function(event){
+    isDragging=false;
+    svg.classList.remove('is-dragging');
+    if(hitArea.hasPointerCapture(event.pointerId))hitArea.releasePointerCapture(event.pointerId);
+    showCursor(event);
+  });
+  hitArea.addEventListener('pointercancel',function(){
+    isDragging=false;
+    svg.classList.remove('is-dragging');
+  });
+  hitArea.addEventListener('pointerleave',function(event){
+    if(event.buttons||isDragging)return;
+    cursorLine.setAttribute('visibility','hidden');
+    cursorPoint.setAttribute('visibility','hidden');
+    tooltip.setAttribute('visibility','hidden');
+    if(window.roadbookMapState){
+      window.roadbookMapState.cursor.setStyle({opacity:0,fillOpacity:0});
+    }
+  });
+  function setProfileZoom(nextWidth,center){
+    var width=Math.max(260,Math.min(1000,nextWidth));
+    var ratio=(center-profileView.x)/profileView.width;
+    var x=center-ratio*width;
+    x=Math.max(0,Math.min(1000-width,x));
+    profileView={x:x,width:width};
+    svg.setAttribute('viewBox',x+' 0 '+width+' 190');
+  }
+  function zoomProfile(factor){
+    setProfileZoom(profileView.width*factor,profileCenter);
+  }
+  svg.addEventListener('wheel',function(event){
+    event.preventDefault();
+    var position=svgPosition(event);
+    profileCenter=position.x;
+    zoomProfile(event.deltaY<0?.82:1.22);
+  },{passive:false});
+  document.getElementById('profile-zoom-in').addEventListener('click',function(){zoomProfile(.75);});
+  document.getElementById('profile-zoom-out').addEventListener('click',function(){zoomProfile(1.3);});
+  document.getElementById('profile-reset').addEventListener('click',function(){
+    profileView={x:0,width:1000};
+    profileCenter=500;
+    svg.setAttribute('viewBox','0 0 1000 190');
+  });
 })();
 </script>
 </body></html>

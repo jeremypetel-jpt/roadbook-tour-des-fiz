@@ -1,9 +1,11 @@
-const CACHE_NAME = "tour-des-fiz-v14";
+const CACHE_NAME = "tour-des-fiz-v19";
 const CORE_FILES = [
   "./",
   "./index.html",
   "./manifest.webmanifest",
-  "./icon.svg"
+  "./icon.svg",
+  "./itineraire-secondaire.js",
+  "./itineraire-secondaire.gpx"
 ];
 
 self.addEventListener("install", event => {
